@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Caveat } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ConvexClientProvider } from "@/components/convex-client-provider";
+import PullCordSection from "@/components/pull-cord";
+import { VerticalLines } from "@/components/vertical-lines";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -31,14 +33,19 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} ${caveat.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
+      <body className="min-h-full flex flex-col bg-white dark:bg-black transition-colors duration-300">
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
         >
-          <ConvexClientProvider>{children}</ConvexClientProvider>
+          <ConvexClientProvider>
+            <div className="min-h-screen w-full relative overflow-x-hidden">
+              <PullCordSection />
+              <VerticalLines>{children}</VerticalLines>
+            </div>
+          </ConvexClientProvider>
         </ThemeProvider>
       </body>
     </html>

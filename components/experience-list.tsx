@@ -21,70 +21,69 @@ type ExperienceData = {
 
 const experiences: ExperienceData[] = [
   {
-    title: "Linux Foundation AI Security Mentorship",
-    role: "AI Security Intern, Caracal",
-    dates: "Jun 2026 - Present",
-    location: "Remote",
-    src: "https://picsum.photos/seed/exp1/200",
+    title: "DP-Unity Company",
+    role: "Front-End Developer, R&D Department",
+    dates: "2024 - Present",
+    location: "Full time",
+    src: "/asset/images/work_experience/logo-dpu.png",
     imageFit: "cover",
     imageZoom: 1,
     description: `
-      Building Caracal, an AI-agent security platform that enforces pre-execution authority checks before humans, agents, or services can trigger delegated actions
-      Designing policy-driven AI execution controls for request routing, approval gates, revocation checks, and common human-to-agent and agent-to-service workflows
-      Modeling delegation graphs that evaluate long and deep authority chains, resolve valid permission paths, and block unauthorized agent actions before execution
-      Integrating a secret vault layer so AI agents can use API keys and service credentials through policy-approved access without exposing raw secrets
-      Recording tamper-evident audit records and immutable proofs to a ledger-backed adapter for compliance, traceability, and AI-action accountability
-      Extending the platform toward agent policy negotiation, security reasoning modules, decentralized identity, verifiable credentials, and audit-derived policy recommendations
+      Built responsive web apps for construction digital transformation using Next.js and TypeScript.
+  Integrated Bryntum Gantt to deliver interactive, enterprise-grade project scheduling interfaces.
+  Engineered high-performance web 3D/BIM viewers using Cesium and Xeokit with optimized load speeds.
+  Packaged core 3D visualization and interaction modules into reusable internal libraries.
+  Researched 4D BIM integrations by connecting schedule timelines directly with 3D models.
     `,
     tech: [
-      "AI Security",
-      "AI Agents",
-      "Policy Engines",
-      "Delegation Graphs",
-      "Secret Vaults",
-      "DLT",
-      "Audit Logs",
-      "DID/VC",
-      "Agent Security",
+      "Next.js",
+      "React",
+      "JavaScript",
+      "TypeScript",
+      "Tailwind CSS",
+      "Cesium",
+      "Xeokit",
+      "Bryntum Gantt",
+      "Autodesk Forge",
+      "Webpack",
     ],
     metrics: [
-      { label: "Core Components", value: "5" },
-      { label: "Principals", value: "3" },
-      { label: "Term", value: "Jun-Nov" },
-      { label: "Audit Trail", value: "Ledger" },
+      { label: "Core Projects", value: "3" },
+      { label: "3D Engines Integrated", value: "4" },
+      { label: "Active 3D Users", value: "50+" },
+      { label: "Internal Packages", value: "5+" },
     ],
   },
   {
-    title: "Google Summer of Code 2026",
-    role: "AI Intern, Sugar Labs",
-    dates: "May 2026 - Present",
-    location: "Remote",
-    src: "https://picsum.photos/seed/exp2/200",
+    title: "Central Construction Joint Stock Company",
+    role: "BIM Engineer, BIM Developer",
+    dates: "2021 - 2023",
+    location: "Full time",
+    src: "/asset/images/work_experience/logo-central.png",
     imageFit: "cover",
     imageZoom: 1,
     description: `
-      Building Activity On Demand, a constructionist AI workflow that helps learners create, inspect, modify, and remix real Sugar activities instead of passively receiving generated code
-      Designing a GTK3 experience launched from Sugar's Home View with prompt ideation, template selection, provider policy, generation progress, and Use - Modify - Create learning modes
-      Implementing the core Python architecture across ActivitySpec, template inference, RAG-grounded planning, Gemini/local provider flows, SQLite job history, session revisions, provenance, and validation
-      Developing a guided Studio with file tree navigation, annotated source viewing, AST-based code explanations, editable-region challenges, live validation, version diffs, and reflection prompts
-      Building classroom-ready safeguards with provider profiles, teacher-controlled settings, API-key storage, forbidden import/call validation, template fallback, and retry-on-validation loops
-      Supporting the Sugar Labs community by reviewing contributor pull requests, onboarding new developers, discussing issues, and helping applicants clarify GSoC proposal problem statements
+      Developed custom add-ins for Revit to help engineering teams work faster and more accurately in design and construction tasks.
+      Researched and built prototypes for new tools in 3D visualization, automation, and data processing for construction workflows.
+      Created internal tools that saved time for engineers, including automated data exports, report generation, model checks, and BIM model interactions.
+      Worked closely with technical teams and project managers to understand their needs and deliver software that fits real construction use cases.
+      Provided development support to construction teams by identifying common issues and building tools to solve them efficiently.
+      Learned 3D modeling and BIM workflows from construction experts to make sure the software tools matched real-world field requirements.
     `,
     tech: [
+      "Revit",
+      "Autocad",
+      "Enscape",
+      "Twinmotion",
+      "Revit Api",
+      "C#",
       "Python",
-      "GTK3",
-      "Sugar",
-      "Gemini API",
-      "SQLite",
-      "AST",
-      "RAG",
-      "LLM Safety",
     ],
     metrics: [
-      { label: "Learning Modes", value: "3" },
-      { label: "Architecture Layers", value: "5" },
-      { label: "Modules", value: "14+" },
-      { label: "RAG Docs", value: "16+" },
+      { label: "Add-ins & Tools", value: "15+" },
+      { label: "Projects Supported", value: "5+" },
+      { label: "Time Saved", value: "40%" },
+      { label: "Models Checked", value: "20+" },
     ],
   },
 ];
@@ -205,7 +204,7 @@ export function ExperienceList() {
                               className={cn(
                                 "relative min-w-0 px-3 py-2",
                                 !isLastMetric &&
-                                  "after:absolute after:bottom-0 after:right-0 after:top-0 after:w-0 after:border-r after:border-black/30 after:mask-[repeating-linear-gradient(to_bottom,black_0,black_1px,transparent_1px,transparent_6px)] dark:after:border-white/15",
+                                  "after:absolute after:bottom-0 after:right-0 after:top-0 after:w-0 after:border-r after:border-black/30 after:mask-[repeating-linear-gradient(to_bottom,black_0,black_1px,transparent_1px,transparent_6px)] dark:after:border-white/25",
                                 !isLastMetric &&
                                   isRowBreak &&
                                   "after:hidden 2xl:after:block",
@@ -224,7 +223,7 @@ export function ExperienceList() {
 
                       {/* Đường kẻ ngang trên chạm viền dọc */}
                       <span
-                        className="pointer-events-none absolute inset-x-0 top-0 h-0 border-t border-black/30 dark:border-white/15"
+                        className="pointer-events-none absolute inset-x-0 top-0 h-0 border-t border-black/30 dark:border-white/25"
                         style={{
                           maskImage:
                             "repeating-linear-gradient(to right, black 0, black 1px, transparent 1px, transparent 6px)",
@@ -235,7 +234,7 @@ export function ExperienceList() {
 
                       {/* Đường kẻ ngang giữa khi hiển thị 2 cột */}
                       <span
-                        className="pointer-events-none absolute inset-x-0 top-1/2 h-0 border-t border-black/30 dark:border-white/15 2xl:hidden"
+                        className="pointer-events-none absolute inset-x-0 top-1/2 h-0 border-t border-black/30 dark:border-white/25 2xl:hidden"
                         style={{
                           maskImage:
                             "repeating-linear-gradient(to right, black 0, black 1px, transparent 1px, transparent 6px)",
@@ -246,7 +245,7 @@ export function ExperienceList() {
 
                       {/* Đường kẻ ngang dưới chạm viền dọc */}
                       <span
-                        className="pointer-events-none absolute inset-x-0 bottom-0 h-0 border-b border-black/30 dark:border-white/15"
+                        className="pointer-events-none absolute inset-x-0 bottom-0 h-0 border-b border-black/30 dark:border-white/25"
                         style={{
                           maskImage:
                             "repeating-linear-gradient(to right, black 0, black 1px, transparent 1px, transparent 6px)",
@@ -327,7 +326,7 @@ export function ExperienceList() {
             {/* Dashed line divider between items */}
             {!isLast && (
               <div
-                className="w-full h-0 border-b border-black/20 dark:border-white/10 pointer-events-none"
+                className="w-full h-0 border-b border-black/20 dark:border-white/25 pointer-events-none"
                 style={{
                   maskImage:
                     "repeating-linear-gradient(to right, black 0, black 1px, transparent 1px, transparent 6px)",

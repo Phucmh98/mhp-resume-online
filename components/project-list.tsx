@@ -31,9 +31,11 @@ export {
 export const ProjectCard = ({
   project,
   isPriority = false,
+  index = 0,
 }: {
   project: Project;
   isPriority?: boolean;
+  index?: number;
 }) => {
   const [hoveredTech, setHoveredTech] = useState<string | null>(null);
   const [shouldLoadHoverImage, setShouldLoadHoverImage] = useState(false);
@@ -93,12 +95,9 @@ export const ProjectCard = ({
       >
         {/* Ambient Hover Background */}
         <motion.div
-          className="absolute inset-0 bg-cover bg-center"
+          className="absolute inset-0 bg-cover bg-center pointer-events-none"
           style={{
-            backgroundImage:
-              shouldLoadHoverImage && project.backgroundImage
-                ? `url('${project.backgroundImage}')`
-                : undefined,
+            backgroundImage: `url('${project.backgroundImage || `/asset/images/bg-retro-${(index % 4) + 1}.jpg`}')`,
             backgroundSize: "cover",
             backgroundPosition: "center",
           }}
@@ -436,6 +435,7 @@ export function ProjectsList() {
         {displayProjects.slice(0, 2).map((project, idx) => (
           <ProjectCard
             key={project.slug || project.title || idx}
+            index={idx}
             project={project}
             isPriority={idx === 0}
           />
@@ -455,9 +455,9 @@ export function ProjectsList() {
             }}
           />
           {/* Intersections */}
-          <div className="absolute top-0 -left-4 w-[2px] h-[2px] bg-black/40 dark:bg-white/25 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-20" />
-          <div className="absolute top-0 -right-4 w-[2px] h-[2px] bg-black/40 dark:bg-white/25 translate-x-1/2 -translate-y-1/2 pointer-events-none z-20" />
-          <div className="absolute top-0 left-1/2 w-[2px] h-[2px] bg-black/40 dark:bg-white/25 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-20" />
+          <div className="absolute top-0 -left-4 w-0.5 h-0.5 bg-black/40 dark:bg-white/25 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-20" />
+          <div className="absolute top-0 -right-4 w-0.5 h-0.5 bg-black/40 dark:bg-white/25 translate-x-1/2 -translate-y-1/2 pointer-events-none z-20" />
+          <div className="absolute top-0 left-1/2 w-0.5 h-0.5 bg-black/40 dark:bg-white/25 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-20" />
         </div>
       )}
 
@@ -467,6 +467,7 @@ export function ProjectsList() {
           {displayProjects.slice(2, 4).map((project, idx) => (
             <ProjectCard
               key={project.slug || project.title || idx}
+              index={idx + 2}
               project={project}
             />
           ))}

@@ -6,8 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 
-const darkBannerImage =
-  "/ChatGPT%20Image%20May%2022%2C%202026%2C%2012_49_39%20AM.jpg";
+const darkBannerImage = "/asset/images/phuc-bg-car.png";
 
 interface SocialProfile {
   name: string;
@@ -223,7 +222,7 @@ export default function SocialHoverCard({
                   <>
                     {/* Banner Section */}
                     {profile.banner ? (
-                      <div className="relative w-full h-16 bg-zinc-200 dark:bg-zinc-800 overflow-hidden">
+                      <div className="relative w-full h-20 bg-zinc-200 dark:bg-zinc-800 overflow-hidden">
                         {profile.banner.startsWith("bg-") ? (
                           <div
                             className={cn("w-full h-full", profile.banner)}
@@ -238,7 +237,7 @@ export default function SocialHoverCard({
                             decoding="async"
                             quality={75}
                             sizes="250px"
-                            className="w-full h-full object-cover opacity-95 scale-[1.15] origin-right"
+                            className="w-full h-full object-cover object-bottom"
                           />
                         )}
                       </div>

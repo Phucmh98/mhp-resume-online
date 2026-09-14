@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo, useSyncExternalStore } from "react";
+import { useState, useEffect, useMemo, useSyncExternalStore, Fragment } from "react";
 import { useTheme } from "next-themes";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -41,7 +41,7 @@ export const ProjectCard = ({
   const [shouldLoadHoverImage, setShouldLoadHoverImage] = useState(false);
   const { resolvedTheme } = useTheme();
   const mounted = useSyncExternalStore(
-    () => () => {},
+    () => () => { },
     () => true,
     () => false,
   );
@@ -110,7 +110,7 @@ export const ProjectCard = ({
 
         {/* Floating screenshot sitting directly at the bottom of the outer wrapper */}
         <motion.div
-          className="absolute bottom-0 left-1/2 w-[85%] rounded-t-[10px] bg-white dark:bg-[#0a0a0a] p-0 shadow-[0_-8px_30px_rgba(0,0,0,0.06)] dark:shadow-[0_-8px_30px_rgba(0,0,0,0.5)] z-20 border border-black/5 dark:border-white/[0.15] border-b-0"
+          className="absolute bottom-0 left-1/2 w-[85%] rounded-t-[10px] bg-white dark:bg-[#0a0a0a] p-0 shadow-[0_-8px_30px_rgba(0,0,0,0.06)] dark:shadow-[0_-8px_30px_rgba(0,0,0,0.5)] z-20 border border-black/5 dark:border-white/15 border-b-0"
           variants={{
             rest: { height: "78%", y: 0, x: "-50%" },
             hover: { height: "72%", y: 4, x: "-50%" },
@@ -176,7 +176,7 @@ export const ProjectCard = ({
                       );
                     })()
                   ) : (
-                    <span className="px-1.5 py-0.5 rounded border border-black/30 dark:border-white/[0.15] text-[9px] text-zinc-500 dark:text-zinc-400 leading-none">
+                    <span className="px-1.5 py-0.5 rounded border border-black/30 dark:border-white/15 text-[9px] text-zinc-500 dark:text-zinc-400 leading-none">
                       {item.label}
                     </span>
                   )}
@@ -301,9 +301,9 @@ export function formatConvexProject(p: ConvexProjectRecord): Project {
     p.id ||
     (p.name
       ? p.name
-          .toLowerCase()
-          .replace(/[^a-z0-9]+/g, "-")
-          .replace(/^-|-$/g, "")
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-|-$/g, "")
       : p._id);
 
   return {
@@ -328,7 +328,7 @@ export function ProjectCardSkeleton() {
       {/* Outer Wrapper Skeleton */}
       <div className="relative w-full aspect-[1.25] rounded-xl border border-black/5 dark:border-white/5 bg-zinc-50/80 dark:bg-[#09090b]/80 shadow-sm p-3.5 pb-0 flex flex-col overflow-hidden sm:aspect-[1.4] sm:p-4 sm:pb-0">
         {/* Floating Screenshot Skeleton */}
-        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[85%] h-[78%] rounded-t-[10px] bg-zinc-100/70 dark:bg-zinc-900/70 border border-black/5 dark:border-white/[0.15] border-b-0 overflow-hidden p-1.5 pb-0">
+        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[85%] h-[78%] rounded-t-[10px] bg-zinc-100/70 dark:bg-zinc-900/70 border border-black/5 dark:border-white/15 border-b-0 overflow-hidden p-1.5 pb-0">
           <Skeleton className="size-full rounded-t-[8px] bg-zinc-200/70 dark:bg-zinc-800/70" />
         </div>
       </div>
@@ -379,9 +379,9 @@ export function ProjectsListSkeleton() {
               "repeating-linear-gradient(to right, black 0, black 1px, transparent 1px, transparent 6px)",
           }}
         />
-        <div className="absolute top-0 -left-4 w-[2px] h-[2px] bg-black/40 dark:bg-white/25 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-20" />
-        <div className="absolute top-0 -right-4 w-[2px] h-[2px] bg-black/40 dark:bg-white/25 translate-x-1/2 -translate-y-1/2 pointer-events-none z-20" />
-        <div className="absolute top-0 left-1/2 w-[2px] h-[2px] bg-black/40 dark:bg-white/25 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-20" />
+        <div className="absolute top-0 -left-4 w-0.5 h-0.5 bg-black/40 dark:bg-white/25 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-20" />
+        <div className="absolute top-0 -right-4 w-0.5 h-0.5 bg-black/40 dark:bg-white/25 translate-x-1/2 -translate-y-1/2 pointer-events-none z-20" />
+        <div className="absolute top-0 left-1/2 w-0.5 h-0.5 bg-black/40 dark:bg-white/25 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-20" />
       </div>
 
       {/* Row 2 */}
@@ -393,7 +393,7 @@ export function ProjectsListSkeleton() {
   );
 }
 
-export function ProjectsList() {
+export function ProjectsList({ limit }: { limit?: number } = {}) {
   // Lấy dữ liệu từ bảng projectManage trên Convex
   const convexProjects = useQuery(api.projectManage.getAll);
 
@@ -425,54 +425,71 @@ export function ProjectsList() {
     return null;
   }
 
-  // Chỉ hiển thị tối đa 4 dự án tại màn hình này
-  const displayProjects = projects.slice(0, 4);
+  // Nếu có giới hạn (limit) thì cắt số lượng, ngược lại hiển thị đầy đủ
+  const displayProjects =
+    typeof limit === "number" ? projects.slice(0, limit) : projects;
+
+  // Chia danh sách thành từng hàng, mỗi hàng tối đa 2 dự án
+  const rows: Project[][] = [];
+  for (let i = 0; i < displayProjects.length; i += 2) {
+    rows.push(displayProjects.slice(i, i + 2));
+  }
 
   return (
     <div className="flex flex-col relative z-10 w-full">
-      {/* Row 1: 2 dự án đầu tiên */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-10 md:gap-y-0 pb-10 md:pb-6">
-        {displayProjects.slice(0, 2).map((project, idx) => (
-          <ProjectCard
-            key={project.slug || project.title || idx}
-            index={idx}
-            project={project}
-            isPriority={idx === 0}
-          />
-        ))}
-      </div>
+      {rows.map((rowProjects, rowIndex) => {
+        const isFirst = rowIndex === 0;
+        const isLast = rowIndex === rows.length - 1;
 
-      {/* Middle Horizontal Line Container */}
-      {displayProjects.length > 2 && (
-        <div className="relative w-full h-0 hidden md:block">
-          <div
-            className="absolute left-[-100vw] right-[-100vw] h-0 border-b border-black/30 dark:border-white/25 pointer-events-none"
-            style={{
-              maskImage:
-                "repeating-linear-gradient(to right, black 0, black 1px, transparent 1px, transparent 6px)",
-              WebkitMaskImage:
-                "repeating-linear-gradient(to right, black 0, black 1px, transparent 1px, transparent 6px)",
-            }}
-          />
-          {/* Intersections */}
-          <div className="absolute top-0 -left-4 w-0.5 h-0.5 bg-black/40 dark:bg-white/25 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-20" />
-          <div className="absolute top-0 -right-4 w-0.5 h-0.5 bg-black/40 dark:bg-white/25 translate-x-1/2 -translate-y-1/2 pointer-events-none z-20" />
-          <div className="absolute top-0 left-1/2 w-0.5 h-0.5 bg-black/40 dark:bg-white/25 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-20" />
-        </div>
-      )}
+        let paddingClass = "";
+        if (isFirst && isLast) {
+          paddingClass = "";
+        } else if (isFirst) {
+          paddingClass = "pb-10 md:pb-6";
+        } else if (isLast) {
+          paddingClass = "pt-0 md:pt-6";
+        } else {
+          paddingClass = "pt-0 md:pt-6 pb-10 md:pb-6";
+        }
 
-      {/* Row 2: 2 dự án tiếp theo (tối đa 4 cái) */}
-      {displayProjects.length > 2 && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-10 md:gap-y-0 pt-0 md:pt-6">
-          {displayProjects.slice(2, 4).map((project, idx) => (
-            <ProjectCard
-              key={project.slug || project.title || idx}
-              index={idx + 2}
-              project={project}
-            />
-          ))}
-        </div>
-      )}
+        return (
+          <Fragment key={`row-${rowIndex}`}>
+            {rowIndex > 0 && (
+              <div className="relative w-full h-0 hidden md:block">
+                <div
+                  className="absolute left-[-100vw] right-[-100vw] h-0 border-b border-black/30 dark:border-white/25 pointer-events-none"
+                  style={{
+                    maskImage:
+                      "repeating-linear-gradient(to right, black 0, black 1px, transparent 1px, transparent 6px)",
+                    WebkitMaskImage:
+                      "repeating-linear-gradient(to right, black 0, black 1px, transparent 1px, transparent 6px)",
+                  }}
+                />
+                {/* Intersections */}
+                <div className="absolute top-0 -left-4 w-0.5 h-0.5 bg-black/40 dark:bg-white/25 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-20" />
+                <div className="absolute top-0 -right-4 w-0.5 h-0.5 bg-black/40 dark:bg-white/25 translate-x-1/2 -translate-y-1/2 pointer-events-none z-20" />
+                <div className="absolute top-0 left-1/2 w-0.5 h-0.5 bg-black/40 dark:bg-white/25 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-20" />
+              </div>
+            )}
+
+            <div
+              className={`grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-10 md:gap-y-0 ${paddingClass}`}
+            >
+              {rowProjects.map((project, idx) => {
+                const globalIndex = rowIndex * 2 + idx;
+                return (
+                  <ProjectCard
+                    key={project.slug || project.title || globalIndex}
+                    index={globalIndex}
+                    project={project}
+                    isPriority={globalIndex === 0}
+                  />
+                );
+              })}
+            </div>
+          </Fragment>
+        );
+      })}
     </div>
   );
 }

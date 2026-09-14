@@ -1,3 +1,7 @@
+"use client";
+
+import { useEffect } from "react";
+import { usePathname } from "next/navigation";
 import { CurrentTime } from "@/components/current-time";
 import HorizontalLine from "@/components/horizontal-line";
 
@@ -6,6 +10,22 @@ export default function CommonSubpageLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const pathname = usePathname();
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    if ("scrollRestoration" in window.history) {
+      window.history.scrollRestoration = "manual";
+    }
+
+    const timer = setTimeout(() => {
+      window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+    }, 20);
+
+    return () => clearTimeout(timer);
+  }, [pathname]);
+
   return (
     <div className="min-h-screen flex flex-col">
       <div className="h-80 relative shrink-0">

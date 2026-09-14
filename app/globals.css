@@ -122,17 +122,23 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
+
   html {
     @apply font-sans;
   }
 }
 
-html,
+html {
+  min-height: 100%;
+  overflow-anchor: none;
+}
+
 body {
-  height: 100%;
+  min-height: 100%;
   width: 100%;
   box-sizing: border-box;
   font-family:

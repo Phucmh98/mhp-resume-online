@@ -21,7 +21,7 @@ export default function Projects() {
           }}
         />
 
-        <ProjectsList />
+        <ProjectsList limit={4} />
         {/* Bottom Horizontal Line */}
         <div
           className="absolute bottom-0 left-[-100vw] right-[-100vw] h-0 border-b border-black/30 dark:border-white/25 pointer-events-none"
@@ -39,7 +39,7 @@ export default function Projects() {
       </div>
       {/* View All Button */}
       <div className="flex justify-center -mt-4.75 pb-0 relative z-20">
-        <Link href="/projects" className="relative group block">
+        <Link href="/projects" scroll={true} className="relative group block">
           <div className="absolute -inset-1.25 border border-black/5 dark:border-white/15 rounded-[11px] pointer-events-none transition-colors duration-300 group-hover:border-black/10 dark:group-hover:border-white/20" />
           <div className="relative flex items-center gap-1.5 px-4 py-2 bg-zinc-50 hover:bg-zinc-100 dark:bg-[#09090b] dark:hover:bg-[#121214] text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 rounded-[6px] text-[13px] font-medium transition-all duration-300 border border-black/5 dark:border-white/10 shadow-sm shadow-black/20 dark:shadow-lg dark:shadow-black/80">
             View All

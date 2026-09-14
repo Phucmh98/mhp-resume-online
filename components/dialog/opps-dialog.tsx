@@ -31,8 +31,9 @@ export default function OppsDialog({ open, onClose }: OppsDialogProps) {
                             <Image
                                 src="/asset/images/over-it-done.gif"
                                 alt="Over it done"
-                                width={170}
-                                height={200}
+                                width={240}
+                                height={139}
+                                className="w-42.5 h-auto"
                                 unoptimized
                             />
                         </div>

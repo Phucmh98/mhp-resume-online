@@ -20,7 +20,7 @@ interface FlipCoverButtonProps {
  * revealing the Cal.com themed button inside linking to https://cal.com/ashutosh-singh-1fqn5v/30min!
  */
 export function FlipCoverButton({
-  href = "https://cal.com/ashutosh-singh-1fqn5v/30min",
+  href = "https://cal.com/phuc-mai-hoai-kpervx/30min",
   label = "Book an intro call",
   className = "",
 }: FlipCoverButtonProps) {

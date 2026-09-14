@@ -4,6 +4,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { ConvexClientProvider } from "@/components/convex-client-provider";
 import PullCordSection from "@/components/pull-cord";
 import { VerticalLines } from "@/components/vertical-lines";
+import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -45,6 +46,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
               <PullCordSection />
               <VerticalLines>{children}</VerticalLines>
             </div>
+            <Toaster position="bottom-right" />
           </ConvexClientProvider>
         </ThemeProvider>
       </body>

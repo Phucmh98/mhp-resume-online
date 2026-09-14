@@ -56,7 +56,7 @@ const socialProfiles: Record<string, SocialProfile> = {
   },
 
   Discord: {
-    name: "mhphuc",
+    name: "Phuc",
     handle: "mhphuc98",
     avatar: "https://github.com/Phucmh98.png",
     bio: "Keep going and never give up.",

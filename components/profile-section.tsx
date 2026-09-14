@@ -154,7 +154,7 @@ export default function ProfileSection() {
           </li>
         </ul>
         <div className="flex flex-wrap items-center gap-2 mt-4">
-          <FlipCoverButton href="" label="Book an intro call" />
+          <FlipCoverButton href="https://cal.com/phuc-mai-hoai-kpervx/30min" label="Book an intro call" />
           <Link href="/contact">
             <SoftPillButton
               as="span"

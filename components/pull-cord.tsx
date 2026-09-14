@@ -3,20 +3,30 @@
 import { PullCord } from "pullcord";
 import "pullcord/pullcord.css";
 import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function PullCordSection() {
   const { resolvedTheme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
+    audioRef.current = new Audio("/asset/sounds/toggle.mp3");
   }, []);
 
   if (!mounted) return null;
 
   const isDark = resolvedTheme === "dark";
+
+  const handlePull = () => {
+    if (audioRef.current) {
+      audioRef.current.currentTime = 0;
+      audioRef.current.play().catch(() => { });
+    }
+    setTheme(isDark ? "light" : "dark");
+  };
 
   return (
     <>
@@ -57,7 +67,7 @@ export default function PullCordSection() {
         }
       >
         <PullCord
-          onPull={() => setTheme(isDark ? "light" : "dark")}
+          onPull={handlePull}
           pulled={!isDark}
           ariaLabel="Toggle theme"
         />

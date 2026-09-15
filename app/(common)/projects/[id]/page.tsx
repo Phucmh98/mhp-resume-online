@@ -20,6 +20,7 @@ import {
 } from "@/app/utils/data/projects-data";
 import { ArrowLeft, ExternalLink } from "lucide-react";
 import { SiGithub } from "react-icons/si";
+import { BlurImage } from "@/components/ui/blur-image";
 
 type ContentDetailBlock = {
   typeContent?: "title" | "heading" | "text" | "paragraph" | "image" | "list";
@@ -28,9 +29,9 @@ type ContentDetailBlock = {
 };
 
 // Blueprint Dashed Divider with crosshair dots
-function BlueprintDivider({ className = "mt-8 mb-6" }: { className?: string }) {
+function BlueprintDivider() {
   return (
-    <div className={`relative ${className}`}>
+    <div className="relative">
       <div
         className="absolute left-[-100vw] right-[-100vw] h-0 border-b border-black/30 dark:border-white/[0.15] pointer-events-none"
         style={{
@@ -67,6 +68,7 @@ function getAdditionalSections(detailBlocks: ContentDetailBlock[]) {
   }[] = [];
 
   let activeSection: { title: string; items: ContentDetailBlock[] } | null = null;
+  let isTechStackSection = false;
 
   for (const block of detailBlocks) {
     const isHeading =
@@ -75,12 +77,17 @@ function getAdditionalSections(detailBlocks: ContentDetailBlock[]) {
     if (isHeading) {
       const headingTitle = block.content || "";
       // Nếu là Tech Stack thì bỏ qua vì đã được render ở "Stack used"
-      if (/tech\s*stack/i.test(headingTitle)) {
+      if (/tech\s*stack/i.test(headingTitle) || /stack\s*used/i.test(headingTitle)) {
+        isTechStackSection = true;
         activeSection = null;
         continue;
       }
+      isTechStackSection = false;
       activeSection = { title: headingTitle, items: [] };
       sections.push(activeSection);
+    } else if (isTechStackSection) {
+      // Bỏ qua tất cả các item (list, text,...) nằm trong Tech Stack
+      continue;
     } else if (activeSection) {
       activeSection.items.push(block);
     } else {
@@ -124,13 +131,13 @@ export default function ProjectDetailPage() {
         <HorizontalLine bleed />
         <div className="pb-16 px-4 flex flex-col z-10 relative">
           <Skeleton className="w-full aspect-video rounded-lg mt-8" />
-          <BlueprintDivider className="mt-8 mb-6" />
+          <BlueprintDivider />
           <div className="grid grid-cols-2 md:grid-cols-3 py-4">
             <Skeleton className="h-4 w-20 mx-auto" />
             <Skeleton className="h-4 w-20 mx-auto" />
             <Skeleton className="h-4 w-20 mx-auto hidden md:block" />
           </div>
-          <BlueprintDivider className="mb-6" />
+          <BlueprintDivider />
           <div className="flex justify-between items-center mb-4">
             <Skeleton className="h-8 w-44" />
             <Skeleton className="h-4 w-16" />
@@ -254,9 +261,9 @@ export default function ProjectDetailPage() {
       <HorizontalLine bleed />
 
       {/* Main Blueprint Column Container */}
-      <div className="pb-16 px-4 flex flex-col z-10 relative">
+      <div className="flex flex-col relative">
         {/* Media (Video or Image) right at the top */}
-        <div className="w-full aspect-video relative mt-8 rounded-lg overflow-hidden border border-black/10 dark:border-white/[0.15] shadow-sm bg-black z-20">
+        <div className="w-full aspect-video relative overflow-hidden">
           {project.video ? (
             project.video.includes("youtube") ? (
               <iframe
@@ -277,20 +284,47 @@ export default function ProjectDetailPage() {
               />
             )
           ) : (
-            <Image
-              src={imageSrc}
+            <BlurImage
+              src={imageSrc || ""}
               alt={title}
               fill
-              priority
               sizes="(min-width: 768px) 40vw, 100vw"
               quality={75}
               className="object-cover"
             />
           )}
         </div>
+        <HorizontalLine bleed />
+
+        {/* Title and Status */}
+        <div className="flex px-4 pt-4 pb-2 items-center justify-between w-full">
+          <h1 className="text-[24px] sm:text-[28px] font-bold text-zinc-900 dark:text-zinc-50 tracking-tight leading-none">
+            {title}
+          </h1>
+          <div className="flex items-center gap-2">
+            <span className="relative flex h-2 w-2">
+              <span
+                className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${pingColor}`}
+              />
+              <span
+                className={`relative inline-flex rounded-full h-2 w-2 ${statusColor}`}
+              />
+            </span>
+            <span className={`text-[13px] font-medium ${statusTextColor}`}>
+              {statusLabel}
+            </span>
+          </div>
+        </div>
+
+        {/* Description */}
+        {description && (
+          <p className="px-4 pb-4 text-[14px] sm:text-[15px] leading-relaxed text-zinc-600 dark:text-zinc-300">
+            {description}
+          </p>
+        )}
 
         {/* Top Dashed Divider (Blueprint system) */}
-        <BlueprintDivider className="mt-8" />
+        <BlueprintDivider />
 
         {/* Action Links Grid */}
         <div className="grid grid-cols-2 md:grid-cols-3 items-center justify-between py-4 relative">
@@ -309,7 +343,7 @@ export default function ProjectDetailPage() {
 
           {/* Vertical Divider 1 */}
           <div
-            className="hidden md:block absolute left-1/3 top-0 bottom-0 w-0 border-l border-black/30 dark:border-white/[0.15] pointer-events-none"
+            className="hidden md:block absolute left-1/3 top-0 bottom-0 w-0 border-l border-black/30 dark:border-white/25 pointer-events-none"
             style={{
               maskImage:
                 "repeating-linear-gradient(to bottom, black 0, black 1px, transparent 1px, transparent 6px)",
@@ -331,9 +365,10 @@ export default function ProjectDetailPage() {
             <div />
           )}
 
+
           {/* Vertical Divider 2 */}
           <div
-            className="hidden md:block absolute left-2/3 top-0 bottom-0 w-0 border-l border-black/30 dark:border-white/[0.15] pointer-events-none"
+            className="hidden md:block absolute left-2/3 top-0 bottom-0 w-0 border-l border-black/30 dark:border-white/25 pointer-events-none"
             style={{
               maskImage:
                 "repeating-linear-gradient(to bottom, black 0, black 1px, transparent 1px, transparent 6px)",
@@ -351,43 +386,18 @@ export default function ProjectDetailPage() {
         </div>
 
         {/* Bottom Dashed Divider */}
-        <BlueprintDivider className="mb-6" />
+        <BlueprintDivider />
 
-        {/* Title and Status */}
-        <div className="flex items-center justify-between w-full mb-4">
-          <h1 className="text-[24px] sm:text-[28px] font-bold text-zinc-900 dark:text-zinc-50 tracking-tight leading-none">
-            {title}
-          </h1>
-          <div className="flex items-center gap-2">
-            <span className="relative flex h-2 w-2">
-              <span
-                className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${pingColor}`}
-              />
-              <span
-                className={`relative inline-flex rounded-full h-2 w-2 ${statusColor}`}
-              />
-            </span>
-            <span className={`text-[13px] font-medium ${statusTextColor}`}>
-              {statusLabel}
-            </span>
-          </div>
-        </div>
 
-        {/* Description */}
-        {description && (
-          <p className="text-[14px] sm:text-[15px] leading-relaxed text-zinc-600 dark:text-zinc-300">
-            {description}
-          </p>
-        )}
 
         {/* Dashed Divider before Stack */}
         {techList.length > 0 && (
           <>
-            <BlueprintDivider className="mt-8 mb-6" />
+            <BlueprintDivider />
 
             {/* Tech Stack */}
-            <div>
-              <h2 className="text-[16px] font-bold text-zinc-900 dark:text-zinc-50 tracking-tight mb-4">
+            <div className="p-4" >
+              <h2 className="text-[16px] font-bold text-zinc-900 dark:text-zinc-50 tracking-tight mb-2">
                 Stack used
               </h2>
               <div className="flex flex-wrap gap-2">
@@ -424,90 +434,95 @@ export default function ProjectDetailPage() {
           }
 
           return (
-            <div key={sIdx}>
-              <BlueprintDivider className="mt-8 mb-6" />
+            <>
+              <BlueprintDivider key={"divider-" + sIdx} />
+              <div className="mx-4" key={sIdx}>
 
-              {sec.title && (
-                <h2 className="text-[16px] font-bold text-zinc-900 dark:text-zinc-50 tracking-tight mb-4">
-                  {sec.title}
-                </h2>
-              )}
 
-              <div className="space-y-4">
-                {sec.items.map((item, iIdx) => {
-                  const type = item.typeContent;
+                {sec.title && (
+                  <h2 className="text-[16px] font-bold text-zinc-900 dark:text-zinc-50 tracking-tight mt-4 mb-2">
+                    {sec.title}
+                  </h2>
+                )}
 
-                  if (type === "text" || type === "paragraph") {
-                    return (
-                      <p
-                        key={iIdx}
-                        className="text-[14px] sm:text-[15px] leading-relaxed text-zinc-600 dark:text-zinc-300"
-                      >
-                        {item.content}
-                      </p>
-                    );
-                  }
+                <div className="space-y-4">
+                  {sec.items.map((item, iIdx) => {
+                    const type = item.typeContent;
 
-                  if (type === "image") {
-                    return (
-                      <div
-                        key={iIdx}
-                        className="w-full aspect-video relative rounded-lg overflow-hidden border border-black/10 dark:border-white/[0.15] shadow-sm bg-black z-20"
-                      >
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
-                          src={item.content}
-                          alt={sec.title || "Screenshot"}
-                          className="w-full h-full object-contain"
-                          loading="lazy"
-                        />
-                      </div>
-                    );
-                  }
+                    if (type === "text" || type === "paragraph") {
+                      return (
+                        <p
+                          key={iIdx}
+                          className="text-[14px] sm:text-[15px] leading-relaxed text-zinc-600 dark:text-zinc-300 mb-4"
+                        >
+                          {item.content}
+                        </p>
+                      );
+                    }
 
-                  if (type === "list") {
-                    return (
-                      <div key={iIdx} className="space-y-2.5">
-                        {item.contentList?.map((text, lIdx) => {
-                          const colonIndex = text.indexOf(":");
-                          const hasPrefix =
-                            colonIndex > 0 && colonIndex < 40;
-                          const prefix = hasPrefix
-                            ? text.slice(0, colonIndex + 1)
-                            : null;
-                          const rest = hasPrefix
-                            ? text.slice(colonIndex + 1)
-                            : text;
+                    if (type === "image") {
+                      return (
+                        <div
+                          key={iIdx}
+                          className="w-full relative overflow-hidden  my-4 rounded-[4px] z-20"
+                        >
+                          <Image
+                            src={item.content || ""}
+                            alt={sec.title || "Screenshot"}
+                            width={1200}
+                            height={800}
+                            sizes="(min-width: 768px) 40vw, 100vw"
+                            quality={75}
+                            className="w-full h-auto object-cover"
+                          />
+                        </div>
+                      );
+                    }
 
-                          return (
-                            <div
-                              key={lIdx}
-                              className="flex items-start gap-2.5 text-[13.5px] sm:text-[14px] leading-relaxed text-zinc-600 dark:text-zinc-300"
-                            >
-                              <span className="w-1.5 h-1.5 rounded-full bg-zinc-400 dark:bg-zinc-600 mt-2 shrink-0" />
-                              <div>
-                                {hasPrefix ? (
-                                  <>
-                                    <strong className="font-semibold text-zinc-900 dark:text-zinc-100">
-                                      {prefix}
-                                    </strong>
-                                    <span>{rest}</span>
-                                  </>
-                                ) : (
-                                  <span>{text}</span>
-                                )}
+                    if (type === "list") {
+                      return (
+                        <div key={iIdx} className="space-y-2 mb-4">
+                          {item.contentList?.map((text, lIdx) => {
+                            const colonIndex = text.indexOf(":");
+                            const hasPrefix =
+                              colonIndex > 0 && colonIndex < 40;
+                            const prefix = hasPrefix
+                              ? text.slice(0, colonIndex + 1)
+                              : null;
+                            const rest = hasPrefix
+                              ? text.slice(colonIndex + 1)
+                              : text;
+
+                            return (
+                              <div
+                                key={lIdx}
+                                className="flex items-start gap-2.5 text-[13.5px] sm:text-[14px] leading-relaxed text-zinc-600 dark:text-zinc-300"
+                              >
+                                <span className="w-1.5 h-1.5 rounded-full bg-zinc-400 dark:bg-zinc-600 mt-2 shrink-0" />
+                                <div>
+                                  {hasPrefix ? (
+                                    <>
+                                      <strong className="font-semibold text-zinc-900 dark:text-zinc-100">
+                                        {prefix}
+                                      </strong>
+                                      <span>{rest}</span>
+                                    </>
+                                  ) : (
+                                    <span>{text}</span>
+                                  )}
+                                </div>
                               </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    );
-                  }
+                            );
+                          })}
+                        </div>
+                      );
+                    }
 
-                  return null;
-                })}
+                    return null;
+                  })}
+                </div>
               </div>
-            </div>
+            </>
           );
         })}
       </div>

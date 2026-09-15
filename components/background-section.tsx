@@ -177,9 +177,8 @@ export default function BackgroundSection({
         playsInline
         preload="auto"
         onLoadedMetadata={handleLoadedMetadata}
-        className={`absolute left-0 w-full object-cover pointer-events-none ${
-          isLetterboxed ? "-top-[17.5%] h-[135%]" : "inset-0 h-full"
-        }`}
+        className={`absolute left-0 w-full object-cover pointer-events-none ${isLetterboxed ? "top-[-17.5%] h-[135%]" : "inset-0 h-full"
+          }`}
         style={{
           transform: "translateZ(0)",
           WebkitBackfaceVisibility: "hidden",

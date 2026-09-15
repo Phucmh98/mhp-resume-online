@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useEffect, Fragment } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
@@ -160,7 +161,22 @@ export const ProjectCard = ({
   // Lấy danh sách tech
   const techList = getProjectTech(project);
 
-  const handleOpen = (e?: React.MouseEvent) => {
+  const router = useRouter();
+
+  const projectSlug =
+    ("id" in project && project.id ? project.id : "") ||
+    ("_id" in project && project._id ? project._id : "") ||
+    ("slug" in project && project.slug ? project.slug : "");
+
+  const handleCardClick = () => {
+    if (projectSlug) {
+      router.push(`/projects/${projectSlug}`);
+    } else if (targetUrl) {
+      window.open(targetUrl, "_blank", "noopener,noreferrer");
+    }
+  };
+
+  const handleOpenLive = (e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
     if (targetUrl) {
       window.open(targetUrl, "_blank", "noopener,noreferrer");
@@ -169,8 +185,8 @@ export const ProjectCard = ({
 
   return (
     <div
-      className={`flex flex-col group ${targetUrl ? "cursor-pointer" : ""}`}
-      onClick={() => handleOpen()}
+      className="flex flex-col group cursor-pointer"
+      onClick={handleCardClick}
     >
       {/* Outer Wrapper */}
       <motion.div
@@ -301,7 +317,7 @@ export const ProjectCard = ({
           {targetUrl && (
             <div
               className="flex shrink-0 items-center gap-1 text-[11px] font-medium text-zinc-500 transition-colors cursor-pointer group-hover:text-zinc-800 dark:group-hover:text-zinc-200 sm:text-[12px]"
-              onClick={handleOpen}
+              onClick={handleOpenLive}
             >
               View Project
               <svg

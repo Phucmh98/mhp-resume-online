@@ -28,7 +28,7 @@ export default function CommonSubpageLayout({
 
   return (
     <div className="min-h-screen flex flex-col">
-      <div className="h-80 relative shrink-0">
+      <div className="h-56 relative shrink-0">
         <div className="absolute bottom-0 right-0 px-4 py-2">
           <CurrentTime />
         </div>

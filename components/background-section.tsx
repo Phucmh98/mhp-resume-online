@@ -10,7 +10,7 @@ interface BackgroundSectionProps {
 
 export default function BackgroundSection({
   className = "",
-  videoSrc = "/asset/videos/mhp_background.mp4",
+  videoSrc = "/asset/videos/mhp_background_opt.mp4",
 }: BackgroundSectionProps) {
   const { resolvedTheme } = useTheme();
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -164,9 +164,12 @@ export default function BackgroundSection({
     };
   }, [stopAll]);
 
+  // Tự động nhận diện video có 2 vệt đen đóng sẵn (như mhp_background_2.mp4) để bù chiều cao
+  const isLetterboxed = videoSrc.includes("mhp_background_2");
+
   return (
     <div
-      className={`relative h-80 w-full overflow-hidden bg-zinc-100 dark:bg-zinc-900  ${className}`}
+      className={`relative h-56 w-full overflow-hidden bg-zinc-100 dark:bg-zinc-900  ${className}`}
     >
       <video
         ref={videoRef}
@@ -174,7 +177,14 @@ export default function BackgroundSection({
         playsInline
         preload="auto"
         onLoadedMetadata={handleLoadedMetadata}
-        className="absolute inset-0 h-full w-full object-cover pointer-events-none"
+        className={`absolute left-0 w-full object-cover pointer-events-none ${
+          isLetterboxed ? "-top-[17.5%] h-[135%]" : "inset-0 h-full"
+        }`}
+        style={{
+          transform: "translateZ(0)",
+          WebkitBackfaceVisibility: "hidden",
+          backfaceVisibility: "hidden",
+        }}
       >
         <source src={videoSrc} type="video/mp4" />
       </video>

@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 export default function ContactPage() {
   return (
     <>
-      <div className="px-4  h-28 flex items-center">
+      <div className="px-4 h-28 flex items-center">
         <div className="flex items-center gap-5">
           <Link
             href="/"
@@ -34,7 +34,7 @@ export default function ContactPage() {
 
       <HorizontalLine bleed />
 
-      <div className="p-4 sm:p-6 w-full">
+      <div className="p-4 sm:p-6 w-full flex-1 flex flex-col">
         <ContactForm />
       </div>
     </>

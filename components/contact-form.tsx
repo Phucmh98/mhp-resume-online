@@ -111,7 +111,7 @@ export function ContactForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} noValidate className="w-full flex flex-col gap-4">
+    <form onSubmit={handleSubmit} noValidate className="w-full flex-1 flex flex-col gap-4">
       {/* Full Name */}
       <div className="w-full flex flex-col gap-1.5">
         <Label htmlFor="fullName" className="text-[13px] sm:text-sm text-zinc-600 dark:text-zinc-300">
@@ -185,7 +185,7 @@ export function ContactForm() {
       </div>
 
       {/* Submit Button */}
-      <div className="-mx-4 sm:-mx-6 -mb-4 sm:-mb-6 mt-4">
+      <div className="-mx-4 sm:-mx-6 -mb-4 sm:-mb-6 mt-auto pt-4">
         <HorizontalLine bleed />
         <div className="py-4 px-4 flex justify-center relative hover:bg-zinc-50 dark:hover:bg-zinc-900/40 transition-colors cursor-pointer rounded-b-lg mt-0 z-20">
           <button

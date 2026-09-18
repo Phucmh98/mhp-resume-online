@@ -8,9 +8,7 @@ import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { HorizontalLine } from "@/components/horizontal-line";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  getProjectTech,
-} from "@/components/project-list";
+import { getProjectTech } from "@/components/project-list";
 import {
   iconMap,
   techNames,
@@ -66,7 +64,8 @@ function getAdditionalSections(detailBlocks: ContentDetailBlock[]) {
     items: ContentDetailBlock[];
   }[] = [];
 
-  let activeSection: { title: string; items: ContentDetailBlock[] } | null = null;
+  let activeSection: { title: string; items: ContentDetailBlock[] } | null =
+    null;
   let isTechStackSection = false;
 
   for (const block of detailBlocks) {
@@ -76,7 +75,10 @@ function getAdditionalSections(detailBlocks: ContentDetailBlock[]) {
     if (isHeading) {
       const headingTitle = block.content || "";
       // Nếu là Tech Stack thì bỏ qua vì đã được render ở "Stack used"
-      if (/tech\s*stack/i.test(headingTitle) || /stack\s*used/i.test(headingTitle)) {
+      if (
+        /tech\s*stack/i.test(headingTitle) ||
+        /stack\s*used/i.test(headingTitle)
+      ) {
         isTechStackSection = true;
         activeSection = null;
         continue;
@@ -186,9 +188,7 @@ export default function ProjectDetailPage() {
     "Untitled Project";
 
   const description =
-    project.description ||
-    ("content" in project ? project.content : "") ||
-    "";
+    project.description || ("content" in project ? project.content : "") || "";
 
   const imageSrc =
     project.image ||
@@ -196,14 +196,10 @@ export default function ProjectDetailPage() {
     "/placeholder.png";
 
   const liveUrl =
-    project.urlDemo ||
-    ("live" in project ? project.live : "") ||
-    "";
+    project.urlDemo || ("live" in project ? project.live : "") || "";
 
   const githubUrl =
-    project.urlGithub ||
-    ("github" in project ? project.github : "") ||
-    "";
+    project.urlGithub || ("github" in project ? project.github : "") || "";
 
   const statusStr = (project.status || "").toLowerCase();
   const isNotStarted = statusStr === "not started" || statusStr === "planning";
@@ -364,7 +360,6 @@ export default function ProjectDetailPage() {
             <div />
           )}
 
-
           {/* Vertical Divider 2 */}
           <div
             className="hidden md:block absolute left-2/3 top-0 bottom-0 w-0 border-l border-black/30 dark:border-white/25 pointer-events-none"
@@ -387,14 +382,9 @@ export default function ProjectDetailPage() {
         {/* Bottom Dashed Divider */}
         <BlueprintDivider />
 
-
-
         {/* Dashed Divider before Stack */}
         {techList.length > 0 && (
-
-
-
-          <div className="p-4" >
+          <div className="p-4">
             <h2 className="text-[16px] font-bold text-zinc-900 dark:text-zinc-50 tracking-tight mb-2">
               Stack used
             </h2>
@@ -431,11 +421,9 @@ export default function ProjectDetailPage() {
           }
 
           return (
-            <>
-              <BlueprintDivider key={"divider-" + sIdx} />
-              <div className="mx-4" key={sIdx}>
-
-
+            <div key={`sec-${sIdx}`}>
+              <BlueprintDivider />
+              <div className="mx-4">
                 {sec.title && (
                   <h2 className="text-[16px] font-bold text-zinc-900 dark:text-zinc-50 tracking-tight mt-4 mb-2">
                     {sec.title}
@@ -481,8 +469,7 @@ export default function ProjectDetailPage() {
                         <div key={iIdx} className="space-y-2 mb-4">
                           {item.contentList?.map((text, lIdx) => {
                             const colonIndex = text.indexOf(":");
-                            const hasPrefix =
-                              colonIndex > 0 && colonIndex < 40;
+                            const hasPrefix = colonIndex > 0 && colonIndex < 40;
                             const prefix = hasPrefix
                               ? text.slice(0, colonIndex + 1)
                               : null;
@@ -519,7 +506,7 @@ export default function ProjectDetailPage() {
                   })}
                 </div>
               </div>
-            </>
+            </div>
           );
         })}
       </div>

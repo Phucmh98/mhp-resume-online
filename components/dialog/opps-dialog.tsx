@@ -21,8 +21,10 @@ export default function OppsDialog({ open, onClose }: OppsDialogProps) {
                     <DialogTitle className="font-bold text-zinc-900 dark:text-zinc-100 ">
                         Oops! Still working on it...
                     </DialogTitle>
-                    <DialogDescription className="h-40 relative flex items-center justify-center text-center">
-
+                    <DialogDescription className="sr-only">
+                        I&apos;m currently trying to fix it.
+                    </DialogDescription>
+                    <div className="h-40 relative flex items-center justify-center text-center">
                         <div className="z-10 px-4 text-center  text-zinc-600 dark:text-zinc-300 leading-relaxed mb-10 flex items-center gap-1.5 ">
                             <Wrench className="size-4.5 text-zinc-600 dark:text-zinc-300" strokeWidth={1.5} />
                             I&apos;m currently trying to fix it.
@@ -37,7 +39,7 @@ export default function OppsDialog({ open, onClose }: OppsDialogProps) {
                                 unoptimized
                             />
                         </div>
-                    </DialogDescription>
+                    </div>
                 </DialogHeader>
             </DialogContent>
         </Dialog>

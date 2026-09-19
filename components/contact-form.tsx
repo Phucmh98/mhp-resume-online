@@ -1,25 +1,25 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { useState } from "react"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Label } from "@/components/ui/label"
-import { Loader2 } from "lucide-react"
-import { toast } from "sonner"
-import { sendMail } from "@/api/email"
-import HorizontalLine from "./horizontal-line"
+import * as React from "react";
+import { useState } from "react";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
+import { sendMail } from "@/api/email";
+import HorizontalLine from "./horizontal-line";
 
 interface FormData {
-  fullName: string
-  email: string
-  message: string
+  fullName: string;
+  email: string;
+  message: string;
 }
 
 interface FormErrors {
-  fullName?: string
-  email?: string
-  message?: string
+  fullName?: string;
+  email?: string;
+  message?: string;
 }
 
 export function ContactForm() {
@@ -27,94 +27,103 @@ export function ContactForm() {
     fullName: "",
     email: "",
     message: "",
-  })
+  });
 
-  const [errors, setErrors] = useState<FormErrors>({})
-  const [hasSubmitted, setHasSubmitted] = useState(false)
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [hasSubmitted, setHasSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const validate = (data: FormData): FormErrors => {
-    const newErrors: FormErrors = {}
+    const newErrors: FormErrors = {};
 
     if (!data.fullName.trim()) {
-      newErrors.fullName = "Full name is required."
+      newErrors.fullName = "Full name is required.";
     }
 
     if (!data.email.trim()) {
-      newErrors.email = "Email address is required."
+      newErrors.email = "Email address is required.";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email.trim())) {
-      newErrors.email = "Please enter a valid email address."
+      newErrors.email = "Please enter a valid email address.";
     }
 
     if (!data.message.trim()) {
-      newErrors.message = "Message is required."
+      newErrors.message = "Message is required.";
     }
 
-    return newErrors
-  }
+    return newErrors;
+  };
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
-    const { name, value } = e.target
-    const updatedData = { ...formData, [name]: value }
-    setFormData(updatedData)
+    const { name, value } = e.target;
+    const updatedData = { ...formData, [name]: value };
+    setFormData(updatedData);
 
     if (hasSubmitted) {
-      const fieldErrors = validate(updatedData)
+      const fieldErrors = validate(updatedData);
       setErrors((prev) => ({
         ...prev,
         [name]: fieldErrors[name as keyof FormErrors],
-      }))
+      }));
     }
-  }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setHasSubmitted(true)
+    e.preventDefault();
+    setHasSubmitted(true);
 
-    const validationErrors = validate(formData)
-    setErrors(validationErrors)
+    const validationErrors = validate(formData);
+    setErrors(validationErrors);
 
     if (Object.keys(validationErrors).length > 0) {
-      toast.error("Please fill in all required fields.")
-      return
+      toast.error("Please fill in all required fields.");
+      return;
     }
 
-    setIsSubmitting(true)
+    setIsSubmitting(true);
 
     try {
       const result = await sendMail({
         name: formData.fullName,
         email: formData.email,
         message: formData.message,
-      })
+      });
 
       if (result.success) {
-        toast.success("Your message has been sent! I will get back to you soon.")
+        toast.success(
+          "Your message has been sent! I will get back to you soon.",
+        );
         setFormData({
           fullName: "",
           email: "",
           message: "",
-        })
-        setHasSubmitted(false)
-        setErrors({})
+        });
+        setHasSubmitted(false);
+        setErrors({});
       } else {
-        toast.error("Failed to send message. Please try again.")
+        toast.error("Failed to send message. Please try again.");
       }
     } catch (err) {
-      console.error(err)
-      toast.error("Failed to send message. Please try again.")
+      console.error(err);
+      toast.error("Failed to send message. Please try again.");
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   return (
-    <form onSubmit={handleSubmit} noValidate className="w-full flex-1 flex flex-col gap-4">
+    <form
+      onSubmit={handleSubmit}
+      noValidate
+      className="w-full flex-1 flex flex-col gap-4"
+    >
       {/* Full Name */}
       <div className="w-full flex flex-col gap-1.5">
-        <Label htmlFor="fullName" className="text-[13px] sm:text-sm text-zinc-600 dark:text-zinc-300">
+        <Label
+          htmlFor="fullName"
+          className="text-[13px] sm:text-sm text-zinc-600 dark:text-zinc-300"
+        >
           Full Name <span className="text-destructive">*</span>
         </Label>
         <Input
@@ -137,7 +146,10 @@ export function ContactForm() {
 
       {/* Email Address */}
       <div className="w-full flex flex-col gap-1.5">
-        <Label htmlFor="email" className="text-[13px] sm:text-sm text-zinc-600 dark:text-zinc-300">
+        <Label
+          htmlFor="email"
+          className="text-[13px] sm:text-sm text-zinc-600 dark:text-zinc-300"
+        >
           Email Address <span className="text-destructive">*</span>
         </Label>
         <Input
@@ -160,7 +172,10 @@ export function ContactForm() {
 
       {/* Message Textarea */}
       <div className="w-full flex flex-col gap-1.5">
-        <Label htmlFor="message" className="text-[13px] sm:text-sm text-zinc-600 dark:text-zinc-300">
+        <Label
+          htmlFor="message"
+          className="text-[13px] sm:text-sm text-zinc-600 dark:text-zinc-300"
+        >
           Message <span className="text-destructive">*</span>
         </Label>
         <Textarea
@@ -185,7 +200,7 @@ export function ContactForm() {
       </div>
 
       {/* Submit Button */}
-      <div className="-mx-4 sm:-mx-6 -mb-4 sm:-mb-6 mt-auto pt-4">
+      <div className="-mx-4 sm:-mx-6 -mb-4 sm:-mb-6 mt-auto">
         <HorizontalLine bleed />
         <div className="py-4 px-4 flex justify-center relative hover:bg-zinc-50 dark:hover:bg-zinc-900/40 transition-colors cursor-pointer rounded-b-lg mt-0 z-20">
           <button
@@ -220,7 +235,7 @@ export function ContactForm() {
         </div>
       </div>
     </form>
-  )
+  );
 }
 
-export default ContactForm
+export default ContactForm;

@@ -1,6 +1,13 @@
 import Image from "next/image";
 import HorizontalLine from "./horizontal-line";
 const skills = [
+  // --- Ngôn ngữ ---
+  { name: "JavaScript", icon: "javascript" },
+  { name: "TypeScript", icon: "typescript" },
+  { name: "Python", icon: "python" },
+  { name: "Dart", icon: "dart" },
+
+  // --- Frontend ---
   { name: "React", icon: "react" },
   { name: "Next", icon: "nextdotjs" },
   {
@@ -8,34 +15,32 @@ const skills = [
     icon: "https://raw.githubusercontent.com/pmndrs/zustand/main/docs/favicon.ico",
   },
   { name: "Tanstack Query", icon: "reactquery" },
-  { name: "Postman", icon: "postman" },
   { name: "Tailwind", icon: "tailwindcss" },
   { name: "shadcn", icon: "shadcnui" },
-  { name: "Figma", icon: "figma" },
-  { name: "Ceisum", icon: "cesium" },
-  { name: "Convex", icon: "convex" },
-  { name: "Clerk", icon: "clerk" },
-  { name: "Prisma", icon: "prisma" },
-  { name: "Pusher", icon: "pusher" },
-  { name: "ArcGIS", icon: "arcgis" },
-  { name: "Webpack", icon: "webpack" },
-  { name: "Npm", icon: "npm" },
-  { name: "Node", icon: "nodedotjs" },
-  { name: "MongoDB", icon: "mongodb" },
-  { name: "JavaScript", icon: "javascript" },
-  { name: "TypeScript", icon: "typescript" },
-  { name: "Python", icon: "python" },
-  { name: "Github", icon: "github" },
-  { name: "Vercel", icon: "vercel" },
-  { name: "Dart", icon: "dart" },
-  { name: "Flutter", icon: "flutter" },
   { name: "MUI", icon: "mui" },
   { name: "Ant Design", icon: "antdesign" },
-  { name: "Cloudinary", icon: "cloudinary" },
   { name: "ThreeJs", icon: "threedotjs" },
-  { name: "Source Tree", icon: "sourcetree" },
+  { name: "Flutter", icon: "flutter" },
   { name: "Blazor", icon: "blazor" },
+
+  // --- Others ---
+  { name: "Node", icon: "nodedotjs" },
+  { name: "MongoDB", icon: "mongodb" },
+  { name: "Prisma", icon: "prisma" },
+  { name: "Convex", icon: "convex" },
+  { name: "Clerk", icon: "clerk" },
+  { name: "Pusher", icon: "pusher" },
+  { name: "Ceisum", icon: "cesium" },
+  { name: "ArcGIS", icon: "arcgis" },
   { name: "Autodesk", icon: "autodesk" },
+  { name: "Figma", icon: "figma" },
+  { name: "Webpack", icon: "webpack" },
+  { name: "Npm", icon: "npm" },
+  { name: "Postman", icon: "postman" },
+  { name: "Github", icon: "github" },
+  { name: "Source Tree", icon: "sourcetree" },
+  { name: "Vercel", icon: "vercel" },
+  { name: "Cloudinary", icon: "cloudinary" },
 ];
 
 export default function TechnologySection() {

@@ -79,7 +79,7 @@ export function getProjectTech(project: ConvexProjectRecord | Project): TechItem
           }
         }
       }
-    } catch {}
+    } catch { }
   }
   if ("type" in project && project.type) {
     return [{ label: project.type }];

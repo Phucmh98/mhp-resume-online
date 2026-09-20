@@ -9,6 +9,7 @@ import Link from "next/link";
 import SocialContact from "./social-contact";
 import { ArrowDownToLine, LoaderPinwheel, Sparkles } from "lucide-react";
 import OppsDialog from "./dialog/opps-dialog";
+import { Badge } from "@/components/ui/badge";
 import {
   Tooltip,
   TooltipContent,
@@ -41,6 +42,67 @@ export default function ProfileSection() {
     };
     fetchData();
   }, []);
+  const newLocal = (
+    <TooltipProvider delay={100}>
+      <div className="flex self-stretch flex-col items-end justify-between gap-2 py-1">
+        <div className="flex items-start gap-2">
+          <Tooltip>
+            <TooltipTrigger
+              render={
+                <SoftPillButton
+                  variant="primary"
+                  className="px-3 py-1.5 text-[12px]! cursor-pointer md:max-lg:p-0! md:max-lg:size-7.5 md:max-lg:flex md:max-lg:items-center md:max-lg:justify-center"
+                  onClick={handleOpenResume}
+                  disabled={loadingResume}
+                >
+                  <div className="flex items-center gap-1.5 md:max-lg:gap-0 md:max-lg:justify-center whitespace-nowrap">
+                    {loadingResume ? (
+                      <LoaderPinwheel className="w-3.5 h-3.5 shrink-0 animate-spin" />
+                    ) : (
+                      <ArrowDownToLine className="w-3.5 h-3.5 shrink-0 text-neutral-200 dark:text-neutral-800" />
+                    )}
+                    <span className="text-neutral-200 dark:text-neutral-800 md:max-lg:hidden">
+                      Resume
+                    </span>
+                  </div>
+                </SoftPillButton>
+              }
+            />
+            <TooltipContent side="top" className="hidden md:max-lg:inline-flex">
+              Resume
+            </TooltipContent>
+          </Tooltip>
+
+          <Tooltip>
+            <TooltipTrigger
+              render={
+                <SoftPillButton
+                  variant="secondary"
+                  className="px-3 py-1.5 text-[12px]! cursor-pointer md:max-lg:p-0! md:max-lg:size-7.5 md:max-lg:flex md:max-lg:items-center md:max-lg:justify-center"
+                  onClick={() => setOpenDialog(true)}
+                >
+                  <div className="flex items-center gap-1.5 md:max-lg:gap-0 md:max-lg:justify-center whitespace-nowrap opacity-80 group-hover:opacity-100 transition-opacity">
+                    <Sparkles className="w-3.5 h-3.5 shrink-0" />
+                    <span className="md:max-lg:hidden">Know me more</span>
+                  </div>
+                </SoftPillButton>
+              }
+            />
+            <TooltipContent side="top" className="hidden md:max-lg:inline-flex">
+              Know me more
+            </TooltipContent>
+          </Tooltip>
+        </div>
+        <Badge
+          variant="outline"
+          className="h-6 gap-1.5 border-emerald-600/20 bg-emerald-50 px-2.5 text-[11px] font-semibold text-green-600 dark:border-emerald-400/25 dark:bg-emerald-400/10 dark:text-green-400"
+        >
+          <span className="size-1.5 animate-pulse rounded-full bg-green-600 shadow-[0_0_0_3px_rgba(16,185,129,0.16),0_0_8px_rgba(16,185,129,0.35)] dark:bg-green-400 dark:shadow-[0_0_0_3px_rgba(134,239,172,0.22),0_0_12px_rgba(134,239,172,0.55)]" />
+          Open to work
+        </Badge>
+      </div>
+    </TooltipProvider>
+  );
   return (
     <>
       <div className="flex w-full p-4 justify-between">
@@ -70,56 +132,7 @@ export default function ProfileSection() {
             </p>
           </div>
         </div>
-        <TooltipProvider delay={100} >
-          <div className="flex items-start gap-2">
-            <Tooltip >
-              <TooltipTrigger
-                render={
-                  <SoftPillButton
-                    variant="primary"
-                    className="px-3 py-1.5 text-[12px]! cursor-pointer md:max-lg:p-0! md:max-lg:size-7.5 md:max-lg:flex md:max-lg:items-center md:max-lg:justify-center"
-                    onClick={handleOpenResume}
-                    disabled={loadingResume}
-                  >
-                    <div className="flex items-center gap-1.5 md:max-lg:gap-0 md:max-lg:justify-center whitespace-nowrap">
-                      {loadingResume ? (
-                        <LoaderPinwheel className="w-3.5 h-3.5 shrink-0 animate-spin" />
-                      ) : (
-                        <ArrowDownToLine className="w-3.5 h-3.5 shrink-0 text-neutral-200 dark:text-neutral-800" />
-                      )}
-                      <span className="text-neutral-200 dark:text-neutral-800 md:max-lg:hidden">
-                        Resume
-                      </span>
-                    </div>
-                  </SoftPillButton>
-                }
-              />
-              <TooltipContent side="top" className="hidden md:max-lg:inline-flex">
-                Resume
-              </TooltipContent>
-            </Tooltip>
-
-            <Tooltip>
-              <TooltipTrigger
-                render={
-                  <SoftPillButton
-                    variant="secondary"
-                    className="px-3 py-1.5 text-[12px]! cursor-pointer md:max-lg:p-0! md:max-lg:size-7.5 md:max-lg:flex md:max-lg:items-center md:max-lg:justify-center"
-                    onClick={() => setOpenDialog(true)}
-                  >
-                    <div className="flex items-center gap-1.5 md:max-lg:gap-0 md:max-lg:justify-center whitespace-nowrap opacity-80 group-hover:opacity-100 transition-opacity">
-                      <Sparkles className="w-3.5 h-3.5 shrink-0" />
-                      <span className="md:max-lg:hidden">Know me more</span>
-                    </div>
-                  </SoftPillButton>
-                }
-              />
-              <TooltipContent side="top" className="hidden md:max-lg:inline-flex">
-                Know me more
-              </TooltipContent>
-            </Tooltip>
-          </div>
-        </TooltipProvider>
+        {newLocal}
       </div>
       <HorizontalLine bleed />
       <div className="px-4 flex flex-col">
@@ -154,7 +167,10 @@ export default function ProfileSection() {
           </li>
         </ul>
         <div className="flex flex-wrap items-center gap-2 mt-4">
-          <FlipCoverButton href="https://cal.com/phuc-mai-hoai-kpervx/30min" label="Book an intro call" />
+          <FlipCoverButton
+            href="https://cal.com/phuc-mai-hoai-kpervx/30min"
+            label="Book an intro call"
+          />
           <Link href="/contact">
             <SoftPillButton
               as="span"
@@ -179,7 +195,9 @@ export default function ProfileSection() {
         </div>
         <SocialContact />
       </div>
-      {openDialog && <OppsDialog open={openDialog} onClose={() => setOpenDialog(false)} />}
+      {openDialog && (
+        <OppsDialog open={openDialog} onClose={() => setOpenDialog(false)} />
+      )}
     </>
   );
 }

@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { HorizontalLine } from "@/components/horizontal-line";
-import { ExperienceList } from "@/components/experience-list";
+
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import ConvexExperienceList from "@/components/convex-experience-list";
 
 export const metadata: Metadata = {
   title: "Experiences | Phuc's Blog",
@@ -33,7 +34,7 @@ export default function ExperiencePage() {
       </div>
 
       <HorizontalLine bleed />
-      <ExperienceList />
+      <ConvexExperienceList />
     </>
   );
 }

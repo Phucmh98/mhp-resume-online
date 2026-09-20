@@ -34,7 +34,7 @@ export default function CommonSubpageLayout({
         </div>
       </div>
       <HorizontalLine bleed />
-      <div className="flex-1 w-full">{children}</div>
+      <div className="flex-1 w-full flex flex-col">{children}</div>
       <HorizontalLine bleed />
       <div className="h-16 shrink-0" />
     </div>

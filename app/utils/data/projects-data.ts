@@ -31,8 +31,15 @@ import {
   SiMongodb,
   SiClerk,
   SiPusher,
+  SiShadcnui,
+  SiDart,
+  SiFlutter,
+  SiAntdesign,
+  SiRedux,
+  SiAxios,
 } from "react-icons/si";
-
+import { FaFilePdf } from "react-icons/fa";
+import { TbBrandThreejs } from "react-icons/tb";
 export type TechIcon = ComponentType<{ className?: string }>;
 export type TechKey =
   | "next"
@@ -67,7 +74,15 @@ export type TechKey =
   | "mongodb"
   | "convex"
   | "clerk"
-  | "pusher";
+  | "pusher"
+  | "shadcn"
+  | "pdf"
+  | "dart"
+  | "flutter"
+  | "antdesign"
+  | "redux"
+  | "axios"
+  | "threejs";
 
 export type TechItem = TechKey | { label: string; tooltip?: string };
 
@@ -122,6 +137,14 @@ export const iconMap: Record<TechKey, TechIcon> = {
   clerk: SiClerk,
   convex: SiConvex,
   pusher: SiPusher,
+  shadcn: SiShadcnui,
+  pdf: FaFilePdf,
+  dart: SiDart,
+  flutter: SiFlutter,
+  antdesign: SiAntdesign,
+  redux: SiRedux,
+  axios: SiAxios,
+  threejs: TbBrandThreejs,
 };
 
 export const techNames: Record<TechKey, string> = {
@@ -158,6 +181,14 @@ export const techNames: Record<TechKey, string> = {
   clerk: "Clerk",
   convex: "Convex",
   pusher: "Pusher",
+  shadcn: "Shadcn UI",
+  pdf: "PDF",
+  dart: "Dart",
+  flutter: "Flutter",
+  antdesign: "Ant Design",
+  redux: "Redux",
+  axios: "Axios",
+  threejs: "Threejs",
 };
 
 /**

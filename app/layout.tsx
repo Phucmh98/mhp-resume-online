@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Caveat } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
-import { ConvexClientProvider } from "@/components/convex-client-provider";
+import { ConvexClientProvider } from "@/components/providers/convex-client-provider";
+import { LenisProvider } from "@/components/providers/lenis-provider";
 import PullCordSection from "@/components/pull-cord";
 import { VerticalLines } from "@/components/vertical-lines";
 import { Toaster } from "@/components/ui/sonner";
@@ -34,8 +35,6 @@ export const metadata: Metadata = {
     shortcut: "/asset/images/logo/logo_mhp.ico",
     apple: "/asset/images/logo/logo_mhp.ico",
   },
-
-
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
@@ -53,11 +52,13 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           disableTransitionOnChange
         >
           <ConvexClientProvider>
-            <div className="min-h-screen w-full relative overflow-x-hidden">
-              <PullCordSection />
-              <VerticalLines>{children}</VerticalLines>
-            </div>
-            <Toaster position="bottom-right" />
+            <LenisProvider>
+              <div className="min-h-screen w-full relative overflow-x-hidden">
+                <PullCordSection />
+                <VerticalLines>{children}</VerticalLines>
+              </div>
+              <Toaster position="bottom-right" />
+            </LenisProvider>
           </ConvexClientProvider>
         </ThemeProvider>
       </body>

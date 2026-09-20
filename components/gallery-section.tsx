@@ -1,4 +1,4 @@
-import { Wrench } from "lucide-react";
+import Gallery from "./gallery";
 import HorizontalLine from "./horizontal-line";
 
 export default function GallerySection() {
@@ -8,13 +8,8 @@ export default function GallerySection() {
         Gallery
       </h2>
       <HorizontalLine bleed />
-      <div className="relative py-10 mx-4">
-        <div className="flex items-center justify-center gap-2 text-zinc-500 dark:text-zinc-400 animate-pulse">
-          <Wrench className="h-4 w-4 shrink-0" />
-          <p className="text-sm font-medium tracking-wide">
-            Currently under maintenance...
-          </p>
-        </div>
+      <div className="relative px-4">
+        <Gallery />
       </div>
     </>
   );

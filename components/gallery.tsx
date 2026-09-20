@@ -15,12 +15,12 @@ import { BlurImage } from "./ui/blur-image";
 
 function GalleryCard({ item }: { item: GalleryItem }) {
   return (
-    <div className="relative group w-70 sm:w-75 shrink-0">
+    <div className="relative group flex h-full w-70 shrink-0 p-1 sm:w-75">
       {/* Outer subtle double-border frame matching portfolio design language */}
-      <div className="absolute -inset-1 border border-black/5 dark:border-white/5 rounded-[10px] pointer-events-none transition-colors duration-300 group-hover:border-black/10 dark:group-hover:border-white/10" />
+      <div className="absolute inset-0 border border-black/5 dark:border-white/5 rounded-[10px] pointer-events-none transition-colors duration-300 group-hover:border-black/10 dark:group-hover:border-white/10" />
 
       {/* Main Card Body */}
-      <div className="relative flex flex-col rounded-[6px] overflow-hidden bg-zinc-50 dark:bg-[#09090b] border border-black/5 dark:border-white/5 shadow-sm shadow-black/5 dark:shadow-lg dark:shadow-black/80 transition-all duration-300 group-hover:bg-zinc-100/80 dark:group-hover:bg-[#121214]">
+      <div className="relative flex h-full w-full flex-col rounded-[6px] overflow-hidden bg-zinc-50 dark:bg-[#09090b] border border-black/5 dark:border-white/5 shadow-sm shadow-black/5 dark:shadow-lg dark:shadow-black/80 transition-all duration-300 group-hover:bg-zinc-100/80 dark:group-hover:bg-[#121214]">
         {/* Screenshot Image Container */}
         <div className="relative w-full aspect-video bg-zinc-100 dark:bg-[#0a0a0a] overflow-hidden pb-0.5">
           <BlurImage
@@ -44,11 +44,11 @@ function GalleryCard({ item }: { item: GalleryItem }) {
         />
 
         {/* Info Content Section */}
-        <div className="flex flex-col gap-1.5 p-3">
-          <p className="text-[13px] font-semibold text-zinc-800 dark:text-zinc-200 leading-snug transition-colors group-hover:text-zinc-900 dark:group-hover:text-white line-clamp-2">
+        <div className="flex flex-1 flex-col gap-1.5 p-3">
+          <p className="wrap-break-word text-[13px] font-semibold text-zinc-800 dark:text-zinc-200 leading-snug transition-colors group-hover:text-zinc-900 dark:group-hover:text-white">
             {item.title}
           </p>
-          <p className="text-[12px] text-zinc-500 dark:text-zinc-400 leading-snug line-clamp-2">
+          <p className="wrap-break-word text-[12px] text-zinc-500 dark:text-zinc-400 leading-snug">
             {item.description}
           </p>
         </div>
@@ -85,9 +85,12 @@ export function Gallery() {
         setApi={setApi}
         className="w-full"
       >
-        <CarouselContent>
+        <CarouselContent className="items-stretch">
           {gallerys.map((item) => (
-            <CarouselItem key={item.url} className="basis-auto">
+            <CarouselItem
+              key={item.url}
+              className="flex basis-auto self-stretch"
+            >
               <GalleryCard item={item} />
             </CarouselItem>
           ))}

@@ -6,33 +6,28 @@ export type Gallery = {
 
 export const gallerys: Gallery[] = [
   {
-    title: "Workspace Setup",
-    url: "https://picsum.photos/seed/workspace-setup/900/600",
-    description: "A quiet desk setup used as placeholder gallery content.",
+    title: "Autodesk forge setup",
+    url: "/asset/images/gallery/autodesk-devices.jpg",
+    description: "Autodesk forge setup for Execl task view, mobile, web.",
   },
   {
-    title: "Mountain Morning",
-    url: "https://picsum.photos/seed/mountain-morning/900/600",
-    description: "A scenic landscape mock image for gallery layout testing.",
+    title: "Company trip 2024",
+    url: "/asset/images/gallery/company-trip-2024.jpg",
+    description: "First time go to Nha Trang with my team.",
   },
   {
-    title: "City Lights",
-    url: "https://picsum.photos/seed/city-lights/900/600",
-    description: "Urban night photography placeholder from Picsum.",
+    title: "Happy Birthday Company 2025",
+    url: "/asset/images/gallery/birth-day-company-2025.jpg",
+    description: "A simple birthday celebration with my team.",
   },
   {
-    title: "Creative Corner",
-    url: "https://picsum.photos/seed/creative-corner/900/600",
-    description: "Mock image for testing visual rhythm in the gallery.",
+    title: "MVP of 2025",
+    url: "/asset/images/gallery/mhp-mvp-2025.jpg",
+    description: "It's me the mvp of 2025.",
   },
   {
-    title: "Minimal Details",
-    url: "https://picsum.photos/seed/minimal-details/900/600",
-    description: "A simple detail shot used to test card spacing and crops.",
-  },
-  {
-    title: "Weekend Walk",
-    url: "https://picsum.photos/seed/weekend-walk/900/600",
-    description: "Outdoor placeholder image for gallery preview states.",
+    title: "Year end party 2025",
+    url: "/asset/images/gallery/company-yep-2025.jpg",
+    description: "A YEP 2025 with my team.",
   },
 ];

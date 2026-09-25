@@ -6,6 +6,8 @@ import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { cn } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
+import { DottedLine } from "@/components/dotted-line";
+import { TechBadge } from "@/components/tech-badge";
 
 type ExperienceMetric = {
   label: string;
@@ -126,36 +128,28 @@ function normalizeExperience(item: ConvexExperienceRecord): ExperienceData {
       : item.startDate || item.endDate || "";
   const projectTech = projects.flatMap((project) => project.techStack || []);
   const tech = parseStringArray(item.tech);
-  const activeProjects = projects.filter(
-    (project) => project.status?.toLowerCase() === "active",
-  ).length;
   const metrics = parseMetrics(item.metrics);
 
   return {
     key: item.id || item._id,
     title: item.company || item.title || item.name || "Untitled Company",
-    role:
-      item.role ||
-      item.position ||
-      (projects.length > 0 ? `${projects.length} projects` : "Experience"),
+    role: item.role || item.position || "",
     dates: item.period || item.dates || startEndDates || "Timeline not set",
-    location: item.location || item.type || "Experience",
+    location:
+      (item.location && item.location.toLowerCase() !== "experience"
+        ? item.location
+        : "") ||
+      (item.type && item.type.toLowerCase() !== "experience"
+        ? item.type
+        : "") ||
+      "Full time",
     src: normalizeLogoPath(item.logo || item.image || item.src),
-    type: item.type,
+    type: item.type?.toLowerCase() === "experience" ? undefined : item.type,
     imageFit: item.imageFit || "cover",
     imageZoom: item.imageZoom,
     description: item.description || item.content || "",
     tech: tech.length > 0 ? tech : [...new Set(projectTech)],
-    metrics:
-      metrics.length > 0
-        ? metrics
-        : projects.length > 0
-          ? [
-              { label: "Projects", value: String(projects.length) },
-              { label: "Active", value: String(activeProjects) },
-              { label: "Tech Used", value: String(new Set(projectTech).size) },
-            ]
-          : [],
+    metrics,
     projects,
     screenshot: item.screenshot,
   };
@@ -178,14 +172,10 @@ function ExperienceListSkeleton() {
             <Skeleton className="h-4 w-24 bg-zinc-200/60 dark:bg-zinc-800/60" />
           </div>
           {item === 0 && (
-            <div
-              className="h-0 w-full border-b border-black/20 dark:border-white/25"
-              style={{
-                maskImage:
-                  "repeating-linear-gradient(to right, black 0, black 1px, transparent 1px, transparent 6px)",
-                WebkitMaskImage:
-                  "repeating-linear-gradient(to right, black 0, black 1px, transparent 1px, transparent 6px)",
-              }}
+            <DottedLine
+              position="relative"
+              borderSide="bottom"
+              className="border-black/20 dark:border-white/25"
             />
           )}
         </div>
@@ -251,7 +241,7 @@ export function ExperienceTimeline({
                       </span>
                     )}
                   </div>
-                  <span className=" text-[14px] sm:text-[15px] text-zinc-600 dark:text-zinc-400 truncate">
+                  <span className="text-[14px] sm:text-[15px] text-zinc-600 dark:text-zinc-400 truncate">
                     {item.role}
                   </span>
 
@@ -261,7 +251,7 @@ export function ExperienceTimeline({
                       {item.dates}
                     </span>
                     <span className="text-[13px] sm:text-[14px] text-zinc-500 dark:text-zinc-400">
-                      {item.location}
+                      Full time
                     </span>
                   </div>
                 </div>
@@ -274,7 +264,7 @@ export function ExperienceTimeline({
                     {item.dates}
                   </span>
                   <span className="text-[13px] sm:text-[14px] text-zinc-500 dark:text-zinc-400 mt-1 whitespace-nowrap leading-tight">
-                    {item.location}
+                    Full time
                   </span>
                 </div>
                 <div className="shrink-0">
@@ -304,84 +294,10 @@ export function ExperienceTimeline({
                 <div
                   className={`${
                     isOpen
-                      ? "pb-4  opacity-100 translate-y-0"
+                      ? "pb-4 opacity-100 translate-y-0"
                       : "pb-0 pt-0 opacity-0 -translate-y-2"
-                  } transition-all duration-500 ease-[cubic-bezier(0.33,1,0.68,1)] px-4 text-[13px] sm:text-[14px] text-zinc-600 dark:text-zinc-400`}
+                  } transition-all duration-500 ease-[cubic-bezier(0.33,1,0.68,1)]text-[13px] sm:text-[14px] text-zinc-600 dark:text-zinc-400`}
                 >
-                  {item.metrics && item.metrics.length > 0 && (
-                    <div className="relative -mx-4 ">
-                      <div className="grid max-w-full grid-cols-2 2xl:grid-cols-4 px-4">
-                        {item.metrics.map((metric, mIdx) => {
-                          const isLastMetric =
-                            mIdx === item.metrics!.length - 1;
-                          const isRowBreak = (mIdx + 1) % 2 === 0;
-
-                          return (
-                            <div
-                              key={metric.label}
-                              className={cn(
-                                "relative min-w-0 px-3 py-2",
-                                !isLastMetric &&
-                                  "after:absolute after:bottom-0 after:right-0 after:top-0 after:w-0 after:border-r after:border-black/30 after:mask-[repeating-linear-gradient(to_bottom,black_0,black_1px,transparent_1px,transparent_6px)] dark:after:border-white/25",
-                                !isLastMetric &&
-                                  isRowBreak &&
-                                  "after:hidden 2xl:after:block",
-                              )}
-                            >
-                              <p className="text-[14px] sm:text-[16px] font-bold leading-none text-zinc-900 dark:text-zinc-100">
-                                {metric.value}
-                              </p>
-                              <p className="mt-1 text-[10px] font-medium uppercase text-zinc-400 dark:text-zinc-600">
-                                {metric.label}
-                              </p>
-                            </div>
-                          );
-                        })}
-                      </div>
-
-                      {/* Đường kẻ ngang trên chạm viền dọc */}
-                      <span
-                        className="pointer-events-none absolute inset-x-0 top-0 h-0 border-t border-black/30 dark:border-white/25"
-                        style={{
-                          maskImage:
-                            "repeating-linear-gradient(to right, black 0, black 1px, transparent 1px, transparent 6px)",
-                          WebkitMaskImage:
-                            "repeating-linear-gradient(to right, black 0, black 1px, transparent 1px, transparent 6px)",
-                        }}
-                      />
-
-                      {/* Đường kẻ ngang giữa khi hiển thị 2 cột */}
-                      <span
-                        className="pointer-events-none absolute inset-x-0 top-1/2 h-0 border-t border-black/30 dark:border-white/25 2xl:hidden"
-                        style={{
-                          maskImage:
-                            "repeating-linear-gradient(to right, black 0, black 1px, transparent 1px, transparent 6px)",
-                          WebkitMaskImage:
-                            "repeating-linear-gradient(to right, black 0, black 1px, transparent 1px, transparent 6px)",
-                        }}
-                      />
-
-                      {/* Đường kẻ ngang dưới chạm viền dọc */}
-                      <span
-                        className="pointer-events-none absolute inset-x-0 bottom-0 h-0 border-b border-black/30 dark:border-white/25"
-                        style={{
-                          maskImage:
-                            "repeating-linear-gradient(to right, black 0, black 1px, transparent 1px, transparent 6px)",
-                          WebkitMaskImage:
-                            "repeating-linear-gradient(to right, black 0, black 1px, transparent 1px, transparent 6px)",
-                        }}
-                      />
-
-                      {/* Các điểm dot tại giao điểm với 2 đường kẻ dọc */}
-                      <span className="pointer-events-none absolute left-0 top-0 h-0.5 w-0.5 -translate-x-1/2 -translate-y-1/2 bg-black/50 dark:bg-white/25" />
-                      <span className="pointer-events-none absolute right-0 top-0 h-0.5 w-0.5 translate-x-1/2 -translate-y-1/2 bg-black/50 dark:bg-white/25" />
-                      <span className="pointer-events-none absolute left-0 top-1/2 h-0.5 w-0.5 -translate-x-1/2 -translate-y-1/2 bg-black/50 dark:bg-white/25 2xl:hidden" />
-                      <span className="pointer-events-none absolute right-0 top-1/2 h-0.5 w-0.5 translate-x-1/2 -translate-y-1/2 bg-black/50 dark:bg-white/25 2xl:hidden" />
-                      <span className="pointer-events-none absolute bottom-0 left-0 h-0.5 w-0.5 -translate-x-1/2 translate-y-1/2 bg-black/50 dark:bg-white/25" />
-                      <span className="pointer-events-none absolute bottom-0 right-0 h-0.5 w-0.5 translate-x-1/2 translate-y-1/2 bg-black/50 dark:bg-white/25" />
-                    </div>
-                  )}
-
                   {isOpen && item.screenshot && (
                     <div className="relative my-3 overflow-hidden rounded-md bg-black">
                       <Image
@@ -397,72 +313,81 @@ export function ExperienceTimeline({
                   )}
 
                   {item.projects.length > 0 ? (
-                    <div className="my-3 space-y-3">
-                      {item.projects.map((project) => {
+                    <div className="space-y-4">
+                      <DottedLine
+                        position="relative"
+                        borderSide="bottom"
+                        className="border-black/20 dark:border-white/25"
+                      />
+                      {item.projects.map((project, pIdx) => {
                         const status = project.status || "Project";
                         const isActive = status.toLowerCase() === "active";
+                        const isLastProject = pIdx === item.projects.length - 1;
 
                         return (
-                          <div
-                            key={`${item.key}-${project.title}`}
-                            className="rounded-md border border-zinc-200/60 bg-zinc-50/80 p-3 dark:border-zinc-800/60 dark:bg-[#111111]"
-                          >
-                            <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
-                              <div className="min-w-0">
-                                <p className="text-[13px] font-semibold leading-tight text-zinc-900 dark:text-zinc-100">
-                                  {project.title}
-                                </p>
-                                {project.period && (
-                                  <p className="mt-1 text-[12px] text-zinc-500 dark:text-zinc-400">
-                                    {project.period}
+                          <React.Fragment key={`${item.key}-${project.title}`}>
+                            <div className="px-4">
+                              <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                                <div className="min-w-0">
+                                  <p className="text-[14px] font-semibold leading-tight text-zinc-900 dark:text-zinc-100">
+                                    {project.title}
                                   </p>
+                                  {project.period && (
+                                    <p className="mt-1 text-[12px] text-zinc-500 dark:text-zinc-400">
+                                      {project.period}
+                                    </p>
+                                  )}
+                                </div>
+                                {isActive && (
+                                  <span className="inline-flex items-center gap-1.5 w-fit shrink-0 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2 py-0.5 text-[10px] font-medium text-emerald-600 dark:text-emerald-400">
+                                    <span className="relative flex h-1.5 w-1.5">
+                                      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+                                      <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                                    </span>
+                                    {status}
+                                  </span>
                                 )}
                               </div>
-                              <span
-                                className={cn(
-                                  "w-fit shrink-0 rounded-full border px-2 py-0.5 text-[10px] font-medium",
-                                  isActive
-                                    ? "border-emerald-500/20 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
-                                    : "border-zinc-300/60 bg-white text-zinc-500 dark:border-zinc-700/60 dark:bg-black dark:text-zinc-400",
+
+                              {project.responsibilities &&
+                                project.responsibilities.length > 0 && (
+                                  <ul className="mt-3 space-y-2 text-[13px] leading-relaxed">
+                                    {project.responsibilities.map(
+                                      (responsibility) => (
+                                        <li
+                                          key={responsibility}
+                                          className="flex items-start gap-2"
+                                        >
+                                          <span className="mt-0.5 shrink-0 text-[14px] leading-none text-zinc-400 dark:text-zinc-500">
+                                            •
+                                          </span>
+                                          <span>{responsibility}</span>
+                                        </li>
+                                      ),
+                                    )}
+                                  </ul>
                                 )}
-                              >
-                                {status}
-                              </span>
+
+                              {project.techStack &&
+                                project.techStack.length > 0 && (
+                                  <div className="mt-3 flex flex-wrap gap-2">
+                                    {project.techStack.map((tech) => (
+                                      <TechBadge
+                                        key={`${project.title}-${tech}`}
+                                        tech={tech}
+                                      />
+                                    ))}
+                                  </div>
+                                )}
                             </div>
-
-                            {project.responsibilities &&
-                              project.responsibilities.length > 0 && (
-                                <ul className="mt-3 space-y-2 text-[13px] leading-relaxed">
-                                  {project.responsibilities.map(
-                                    (responsibility) => (
-                                      <li
-                                        key={responsibility}
-                                        className="flex items-start gap-2"
-                                      >
-                                        <span className="mt-0.5 shrink-0 text-[14px] leading-none text-zinc-400 dark:text-zinc-500">
-                                          •
-                                        </span>
-                                        <span>{responsibility}</span>
-                                      </li>
-                                    ),
-                                  )}
-                                </ul>
-                              )}
-
-                            {project.techStack &&
-                              project.techStack.length > 0 && (
-                                <div className="mt-3 flex flex-wrap gap-2">
-                                  {project.techStack.map((tech) => (
-                                    <span
-                                      key={`${project.title}-${tech}`}
-                                      className="rounded-sm border border-zinc-200/60 bg-white px-2 py-0.5 text-[11px] font-medium text-zinc-500 dark:border-zinc-800/60 dark:bg-black dark:text-zinc-400"
-                                    >
-                                      {tech}
-                                    </span>
-                                  ))}
-                                </div>
-                              )}
-                          </div>
+                            {!isLastProject && (
+                              <DottedLine
+                                position="relative"
+                                borderSide="bottom"
+                                className="border-black/20 dark:border-white/25"
+                              />
+                            )}
+                          </React.Fragment>
                         );
                       })}
                     </div>
@@ -498,14 +423,9 @@ export function ExperienceTimeline({
                   )}
 
                   {item.projects.length === 0 && item.tech.length > 0 && (
-                    <div className="flex flex-wrap gap-2 mt-4">
+                    <div className="flex flex-wrap gap-2 mt-4 px-4">
                       {item.tech.map((tech) => (
-                        <span
-                          key={tech}
-                          className="px-2 py-0.5 rounded-sm border border-zinc-200/60 dark:border-zinc-800/60 bg-zinc-50 dark:bg-[#111111] text-[11px] font-medium text-zinc-500 dark:text-zinc-400"
-                        >
-                          {tech}
-                        </span>
+                        <TechBadge key={tech} tech={tech} />
                       ))}
                     </div>
                   )}
@@ -515,14 +435,10 @@ export function ExperienceTimeline({
 
             {/* Dashed line divider between items */}
             {!isLast && (
-              <div
-                className="w-full h-0 border-b border-black/20 dark:border-white/25 pointer-events-none"
-                style={{
-                  maskImage:
-                    "repeating-linear-gradient(to right, black 0, black 1px, transparent 1px, transparent 6px)",
-                  WebkitMaskImage:
-                    "repeating-linear-gradient(to right, black 0, black 1px, transparent 1px, transparent 6px)",
-                }}
+              <DottedLine
+                position="relative"
+                borderSide="bottom"
+                className="border-black/20 dark:border-white/25"
               />
             )}
           </div>

@@ -3,6 +3,7 @@ import { GitHubUser } from "@/app/types/github.type";
 import { useEffect, useState } from "react";
 import { BlurImage } from "./ui/blur-image";
 import HorizontalLine from "./horizontal-line";
+import LiveAge from "./live-age";
 import FlipCoverButton from "./flip-cover-button/flip-cover-button";
 import SoftPillButton from "./flip-cover-button/soft-pill-button";
 import Link from "next/link";
@@ -105,8 +106,8 @@ export default function ProfileSection() {
   );
   return (
     <>
-      <div className="flex w-full p-4 justify-between">
-        <div className="flex items-center gap-4 sm:gap-5">
+      <div className="flex w-full p-4 justify-between gap-3">
+        <div className="flex items-center gap-3 sm:gap-4 min-w-0">
           <div className="p-0.75 rounded-[6px] sm:rounded-[8px] border-[1.5px] border-black/30 dark:border-white/15 shrink-0">
             <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-[3px] sm:rounded-[5px] overflow-hidden bg-zinc-100 dark:bg-zinc-900">
               {githubUser?.avatar_url ? (
@@ -123,13 +124,11 @@ export default function ProfileSection() {
               )}
             </div>
           </div>
-          <div className="flex flex-col justify-center pt-8">
+          <div className="flex flex-col justify-center pt-8 min-w-0">
             <h1 className="text-[20px] sm:text-[24px] font-bold text-zinc-800 dark:text-zinc-100 tracking-tight leading-none mb-0.5 [text-shadow:-1.5px_0_0_rgba(0,200,255,0.3),1.5px_0_0_rgba(255,80,0,0.3)] dark:[text-shadow:-1.5px_0_0_rgba(0,200,255,0.6),1.5px_0_0_rgba(255,80,0,0.6)]">
               Phuc
             </h1>
-            <p className="text-[13px] sm:text-[14px] text-zinc-500 dark:text-zinc-400">
-              {new Date().getFullYear() - 1998}
-            </p>
+            <LiveAge />
           </div>
         </div>
         {newLocal}

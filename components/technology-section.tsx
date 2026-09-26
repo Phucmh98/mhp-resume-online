@@ -50,7 +50,7 @@ export default function TechnologySection() {
         Skills & Technologies
       </h2>
       <HorizontalLine bleed />
-      <div className="relative py-6 mx-4">
+      <div className="relative m-4">
         <div className="flex flex-wrap gap-2 w-full">
           {skills.map((skill, index) => (
             <div

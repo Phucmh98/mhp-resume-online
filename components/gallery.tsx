@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import Image from "next/image";
 import {
   gallerys,
   type Gallery as GalleryItem,
@@ -11,7 +12,6 @@ import {
   CarouselContent,
   CarouselItem,
 } from "@/components/ui/carousel";
-import { BlurImage } from "./ui/blur-image";
 
 function GalleryCard({ item }: { item: GalleryItem }) {
   return (
@@ -23,12 +23,15 @@ function GalleryCard({ item }: { item: GalleryItem }) {
       <div className="relative flex h-full w-full flex-col rounded-[6px] overflow-hidden bg-zinc-50 dark:bg-[#09090b] border border-black/5 dark:border-white/5 shadow-sm shadow-black/5 dark:shadow-lg dark:shadow-black/80 transition-all duration-300 group-hover:bg-zinc-100/80 dark:group-hover:bg-[#121214]">
         {/* Screenshot Image Container */}
         <div className="relative w-full aspect-video bg-zinc-100 dark:bg-[#0a0a0a] overflow-hidden pb-0.5">
-          <BlurImage
+          <Image
             src={item.url}
             alt={item.title}
-            className="w-full h-full object-cover object-top grayscale group-hover:grayscale-0 transition-all duration-500 scale-[1.01] group-hover:scale-[1.03]"
+            className="h-full w-full scale-[1.01] transform-gpu object-cover object-top grayscale transition-[filter,transform] duration-300 will-change-transform group-hover:scale-[1.03] group-hover:grayscale-0"
             width={500}
             height={500 * (9 / 16)}
+            sizes="(min-width: 640px) 300px, 280px"
+            quality={70}
+            decoding="async"
           />
         </div>
 
@@ -59,19 +62,34 @@ function GalleryCard({ item }: { item: GalleryItem }) {
 
 export function Gallery() {
   const [api, setApi] = React.useState<CarouselApi>();
+  const [isVisible, setIsVisible] = React.useState(false);
+  const rootRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
-    if (!api) return;
+    const root = rootRef.current;
+    if (!root) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsVisible(entry.isIntersecting),
+      { threshold: 0.25 },
+    );
+
+    observer.observe(root);
+    return () => observer.disconnect();
+  }, []);
+
+  React.useEffect(() => {
+    if (!api || !isVisible) return;
 
     const interval = window.setInterval(() => {
       api.scrollNext();
     }, 2500);
 
     return () => window.clearInterval(interval);
-  }, [api]);
+  }, [api, isVisible]);
 
   return (
-    <div className="relative py-4">
+    <div ref={rootRef} className="relative py-4">
       {/* Left fade mask */}
       <div className="absolute left-0 top-0 bottom-0 w-12 bg-linear-to-r from-white dark:from-black to-transparent z-10 pointer-events-none" />
       {/* Right fade mask */}

@@ -111,17 +111,18 @@ export default function BackgroundSection({
     if (!video || !resolvedTheme) return;
 
     if (!isInitializedRef.current) {
-      const maxTime = Math.max(0, (video.duration || 2.04) - 0.001);
-      if (resolvedTheme === "dark") {
-        video.currentTime = maxTime;
-      } else {
-        video.currentTime = 0;
-      }
-      video.pause();
       isInitializedRef.current = true;
       lastThemeRef.current = resolvedTheme;
+
+      if (resolvedTheme === "dark") {
+        video.currentTime = 0;
+        playForward();
+      } else {
+        video.currentTime = 0;
+        video.pause();
+      }
     }
-  }, [resolvedTheme]);
+  }, [resolvedTheme, playForward]);
 
   // React to theme changes (including rapid spamming)
   useEffect(() => {
@@ -134,15 +135,16 @@ export default function BackgroundSection({
     }
 
     if (!isInitializedRef.current) {
-      const maxTime = Math.max(0, (video.duration || 2.04) - 0.001);
-      if (resolvedTheme === "dark") {
-        video.currentTime = maxTime;
-      } else {
-        video.currentTime = 0;
-      }
-      video.pause();
       isInitializedRef.current = true;
       lastThemeRef.current = resolvedTheme;
+
+      if (resolvedTheme === "dark") {
+        video.currentTime = 0;
+        playForward();
+      } else {
+        video.currentTime = 0;
+        video.pause();
+      }
       return;
     }
 

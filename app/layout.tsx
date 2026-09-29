@@ -6,6 +6,7 @@ import { LenisProvider } from "@/components/providers/lenis-provider";
 import PullCordSection from "@/components/pull-cord";
 import { VerticalLines } from "@/components/vertical-lines";
 import { Toaster } from "@/components/ui/sonner";
+import "lenis/dist/lenis.css";
 import "./globals.css";
 
 const geistSans = Geist({

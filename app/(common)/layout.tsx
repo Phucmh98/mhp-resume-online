@@ -5,6 +5,8 @@ import { usePathname } from "next/navigation";
 import { CurrentTime } from "@/components/current-time";
 import HorizontalLine from "@/components/horizontal-line";
 
+import { SubpageFooter } from "@/components/subpage-footer";
+
 export default function CommonSubpageLayout({
   children,
 }: {
@@ -36,7 +38,7 @@ export default function CommonSubpageLayout({
       <HorizontalLine bleed />
       <div className="flex-1 w-full flex flex-col">{children}</div>
       <HorizontalLine bleed />
-      <div className="h-16 shrink-0" />
+      <SubpageFooter />
     </div>
   );
 }

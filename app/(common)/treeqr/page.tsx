@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
-import { HorizontalLine } from "@/components/horizontal-line";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-
-import { TreeQRCard } from "@/components/tree-qr-card";
+import { HorizontalLine } from "@/components/horizontal-line";
+import { ElasticButton } from "@/components/ui/elastic-button";
 
 export const metadata: Metadata = {
     title: "Magic Tree QR | Phuc's Blog",
@@ -34,8 +33,30 @@ export default function TreeQRPage() {
 
             <HorizontalLine bleed />
 
-            <div className="w-full flex-1 flex items-center justify-center p-4 min-h-95 relative">
-                <TreeQRCard />
+            <div className="w-full flex-1 flex flex-col items-center justify-center p-6 min-h-95 gap-6 relative">
+                {/* Image switcher with 3-outline ripple and hold-to-shrink */}
+                <div className="flex flex-col items-center gap-3">
+                    <ElasticButton
+                        src1="/asset/images/bg-retro-1.jpg"
+                        src2="/asset/images/bg-retro-2.jpg"
+                        alt="Switch Image Demo"
+                        className="w-16 h-16 sm:w-20 sm:h-20 rounded border border-black/15 dark:border-white/15"
+                        pressedScale={0.90}
+                        popScale={1.06}
+                        hoverScale={1.02}
+                        rippleClassName="border-emerald-500 dark:border-emerald-400"
+                        img2BorderOffset={5}
+                        img2BorderWidth={2}
+                        rippleDuration={0.5}
+                    >
+
+                    </ElasticButton>
+
+
+                    <span className="text-[12px] text-zinc-500 dark:text-zinc-400 select-none">
+                        Ấn chuột: lan tỏa 6 vòng outline • Nhả chuột: nảy lò xo & đổi ảnh
+                    </span>
+                </div>
             </div>
         </>
     );

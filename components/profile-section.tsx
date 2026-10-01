@@ -1,7 +1,7 @@
 "use client";
 import { GitHubUser } from "@/app/types/github.type";
 import { useEffect, useState } from "react";
-import { BlurImage } from "./ui/blur-image";
+import { ElasticButton } from "./ui/elastic-button";
 import HorizontalLine from "./horizontal-line";
 import LiveAge from "./live-age";
 import FlipCoverButton from "./flip-cover-button/flip-cover-button";
@@ -106,21 +106,25 @@ export default function ProfileSection() {
     <TooltipProvider delay={100}>
       <div className="flex w-full p-4 justify-between gap-3">
         <div className="flex items-center gap-3 sm:gap-4 min-w-0">
-          <div className="p-0.75 rounded-[6px] sm:rounded-[8px] border-[1.5px] border-black/30 dark:border-white/15 shrink-0">
-            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-[3px] sm:rounded-[5px] overflow-hidden bg-zinc-100 dark:bg-zinc-900">
-              {githubUser?.avatar_url ? (
-                <BlurImage
-                  src={githubUser.avatar_url}
-                  alt={githubUser.name || "Profile"}
-                  width={240}
-                  height={240}
-                  quality={90}
-                  className="h-full w-full origin-center object-cover"
-                />
-              ) : (
-                <div className="h-full w-full animate-pulse bg-zinc-200 dark:bg-zinc-800" />
-              )}
-            </div>
+          <div className="shrink-0">
+            {githubUser?.avatar_url ? (
+              <ElasticButton
+                src1={githubUser.avatar_url}
+                src2="/asset/images/avt_phuc_2.png"
+                alt={githubUser.name || "Profile"}
+                className="w-16 h-16 sm:w-20 sm:h-20 rounded border border-black/15 dark:border-white/15"
+                pressedScale={0.90}
+                popScale={1.06}
+                hoverScale={1.02}
+                rippleClassName="border-emerald-500 dark:border-emerald-400"
+                img2BorderOffset={5}
+                img2BorderWidth={2}
+                rippleDuration={0.5}
+                showHint
+              />
+            ) : (
+              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded border border-black/15 dark:border-white/15 animate-pulse bg-zinc-200 dark:bg-zinc-800" />
+            )}
           </div>
           <div className="flex flex-col justify-center pt-8 min-w-0">
             <div className="flex items-center gap-1.5 mb-0.5">

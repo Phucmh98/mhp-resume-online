@@ -11,6 +11,8 @@ import SocialContact from "./social-contact";
 import { ArrowDownToLine, LoaderPinwheel, Sparkles } from "lucide-react";
 import OppsDialog from "./dialog/opps-dialog";
 import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Tooltip,
   TooltipContent,
@@ -106,14 +108,14 @@ export default function ProfileSection() {
     <TooltipProvider delay={100}>
       <div className="flex w-full p-4 justify-between gap-3">
         <div className="flex items-center gap-3 sm:gap-4 min-w-0">
-          <div className="shrink-0">
-            {githubUser?.avatar_url ? (
+          <div className="shrink-0 relative w-16 h-16 sm:w-20 sm:h-20">
+            {githubUser?.avatar_url && (
               <ElasticButton
                 src1={githubUser.avatar_url}
                 src2="/asset/images/avt_phuc_2.png"
                 alt={githubUser.name || "Profile"}
                 className="w-16 h-16 sm:w-20 sm:h-20 rounded border border-black/15 dark:border-white/15"
-                pressedScale={0.90}
+                pressedScale={0.9}
                 popScale={1.06}
                 hoverScale={1.02}
                 rippleClassName="border-emerald-500 dark:border-emerald-400"
@@ -122,9 +124,27 @@ export default function ProfileSection() {
                 rippleDuration={0.5}
                 showHint
               />
-            ) : (
-              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded border border-black/15 dark:border-white/15 animate-pulse bg-zinc-200 dark:bg-zinc-800" />
             )}
+
+            <AnimatePresence>
+              {!githubUser?.avatar_url && (
+                <motion.div
+                  key="skeleton-mask"
+                  className="absolute inset-0 z-10 overflow-hidden rounded pointer-events-none"
+                  exit={{ opacity: 1 }}
+                  transition={{ duration: 0.35 }}
+                >
+                  <motion.div
+                    className="w-full h-full"
+                    initial={{ x: 0 }}
+                    exit={{ x: "-100%" }}
+                    transition={{ duration: 0.35, ease: [0.32, 0.72, 0, 1] }}
+                  >
+                    <Skeleton className="w-full h-full rounded animate-none bg-zinc-200 dark:bg-zinc-800" />
+                  </motion.div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
           <div className="flex flex-col justify-center pt-8 min-w-0">
             <div className="flex items-center gap-1.5 mb-0.5">
@@ -134,7 +154,10 @@ export default function ProfileSection() {
               <Tooltip>
                 <TooltipTrigger
                   render={
-                    <span className="inline-flex cursor-default items-center shrink-0" title="Verified Profile">
+                    <span
+                      className="inline-flex cursor-default items-center shrink-0"
+                      title="Verified Profile"
+                    >
                       <svg
                         viewBox="0 0 24 24"
                         className="size-4.5 sm:size-5 shrink-0 select-none"

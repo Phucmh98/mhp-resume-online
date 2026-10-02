@@ -2,21 +2,23 @@
 
 import React, { useRef, useState, useEffect } from "react";
 import Image, { type StaticImageData } from "next/image";
-import { motion, useAnimation, AnimatePresence, type HTMLMotionProps } from "framer-motion";
+import {
+  motion,
+  useAnimation,
+  AnimatePresence,
+  type HTMLMotionProps,
+} from "framer-motion";
 import { cn } from "@/lib/utils";
 
 export type ElasticButtonVariant =
-  | "default"
-  | "primary"
-  | "secondary"
-  | "outline"
-  | "ghost"
-  | "unstyled";
+  "default" | "primary" | "secondary" | "outline" | "ghost" | "unstyled";
 
 export type ElasticButtonSize = "sm" | "md" | "lg" | "icon" | "custom";
 
-export interface ElasticButtonProps
-  extends Omit<HTMLMotionProps<"button">, "ref" | "children"> {
+export interface ElasticButtonProps extends Omit<
+  HTMLMotionProps<"button">,
+  "ref" | "children"
+> {
   children?: React.ReactNode;
   /** Đường dẫn ảnh thứ nhất */
   src1?: string | StaticImageData;
@@ -74,6 +76,16 @@ export interface ElasticButtonProps
   hintTextImg2?: string;
   /** Class tùy biến cho container gợi ý */
   hintClassName?: string;
+  /** Bật âm thanh bubble-pop khi chuyển sang hình 2 (mặc định: true) */
+  enablePopSound?: boolean;
+  /** Đường dẫn file âm thanh khi chuyển sang hình 2 (mặc định: "/asset/sounds/bubble-pop.mp3") */
+  popSoundSrc?: string;
+  /** Thời gian trễ trước khi phát âm thanh sau khi chuyển ảnh (ms, mặc định: 350ms khớp khi hình 2 hiện xong) */
+  popSoundDelay?: number;
+  /** Bật âm thanh whoosh khi chuyển từ hình 2 về hình 1 (mặc định: true) */
+  enableWhooshSound?: boolean;
+  /** Đường dẫn file âm thanh khi chuyển về hình 1 (mặc định: "/asset/sounds/whoosh-effect.mp3") */
+  whooshSoundSrc?: string;
 }
 
 const variantStyles: Record<ElasticButtonVariant, string> = {
@@ -146,6 +158,11 @@ export const ElasticButton = React.forwardRef<
       hintText = "psst, click me!",
       hintTextImg2 = "you found me!",
       hintClassName,
+      enablePopSound = true,
+      popSoundSrc = "/asset/sounds/bubble-pop.mp3",
+      popSoundDelay = 0,
+      enableWhooshSound = true,
+      whooshSoundSrc = "/asset/sounds/whoosh-effect.mp3",
       disabled,
       onClick,
       onPointerDown,
@@ -155,7 +172,7 @@ export const ElasticButton = React.forwardRef<
       onPointerCancel,
       ...props
     },
-    ref
+    ref,
   ) => {
     const controls = useAnimation();
     const isHoveredRef = useRef(false);
@@ -168,6 +185,100 @@ export const ElasticButton = React.forwardRef<
     const currentImage = activeImage ?? internalImage;
     const hasImages = Boolean(src1);
     const lastTriggerRef = useRef(0);
+
+    const popAudioRef = useRef<HTMLAudioElement | null>(null);
+    const whooshAudioRef = useRef<HTMLAudioElement | null>(null);
+    const soundTimerRef = useRef<NodeJS.Timeout | null>(null);
+    const lastSoundPlayedRef = useRef(0);
+    const isFirstMountRef = useRef(true);
+    const prevImageRef = useRef<1 | 2>(currentImage);
+
+    // Khởi tạo audio một lần ở client
+    useEffect(() => {
+      if (typeof window !== "undefined") {
+        if (enablePopSound && popSoundSrc) {
+          popAudioRef.current = new Audio(popSoundSrc);
+          popAudioRef.current.preload = "auto";
+        }
+        if (enableWhooshSound && whooshSoundSrc) {
+          whooshAudioRef.current = new Audio(whooshSoundSrc);
+          whooshAudioRef.current.preload = "auto";
+        }
+      }
+      return () => {
+        if (soundTimerRef.current) {
+          clearTimeout(soundTimerRef.current);
+          soundTimerRef.current = null;
+        }
+        if (popAudioRef.current) {
+          popAudioRef.current.pause();
+          popAudioRef.current = null;
+        }
+        if (whooshAudioRef.current) {
+          whooshAudioRef.current.pause();
+          whooshAudioRef.current = null;
+        }
+      };
+    }, [enablePopSound, popSoundSrc, enableWhooshSound, whooshSoundSrc]);
+
+    const playBubblePop = () => {
+      const now = Date.now();
+      // Chống spam âm thanh: ít nhất 300ms giữa 2 lần phát
+      if (now - lastSoundPlayedRef.current < 300) return;
+      lastSoundPlayedRef.current = now;
+
+      if (popAudioRef.current) {
+        popAudioRef.current.currentTime = 0;
+        popAudioRef.current.play().catch(() => {});
+      }
+    };
+
+    const playWhoosh = () => {
+      const now = Date.now();
+      // Chống spam âm thanh: ít nhất 300ms giữa 2 lần phát
+      if (now - lastSoundPlayedRef.current < 300) return;
+      lastSoundPlayedRef.current = now;
+
+      if (whooshAudioRef.current) {
+        whooshAudioRef.current.currentTime = 0;
+        whooshAudioRef.current.play().catch(() => {});
+      }
+    };
+
+    // Theo dõi đổi ảnh: 1 -> 2 phát pop, 2 -> 1 phát whoosh (không delay), chống spam
+    useEffect(() => {
+      if (isFirstMountRef.current) {
+        isFirstMountRef.current = false;
+        prevImageRef.current = currentImage;
+        return;
+      }
+
+      if (soundTimerRef.current) {
+        clearTimeout(soundTimerRef.current);
+        soundTimerRef.current = null;
+      }
+
+      // Hình 1 -> Hình 2: Bubble Pop
+      if (prevImageRef.current === 1 && currentImage === 2) {
+        if (enablePopSound) {
+          if (popSoundDelay > 0) {
+            soundTimerRef.current = setTimeout(() => {
+              playBubblePop();
+            }, popSoundDelay);
+          } else {
+            playBubblePop();
+          }
+        }
+      }
+      // Hình 2 -> Hình 1: Whoosh effect (ngay tức thì, không delay)
+      else if (prevImageRef.current === 2 && currentImage === 1) {
+        if (enableWhooshSound) {
+          playWhoosh();
+        }
+      }
+
+      prevImageRef.current = currentImage;
+    }, [currentImage, enablePopSound, popSoundDelay, enableWhooshSound]);
 
     const triggerRipple = () => {
       const now = Date.now();
@@ -227,7 +338,7 @@ export const ElasticButton = React.forwardRef<
 
       try {
         e.currentTarget.setPointerCapture(e.pointerId);
-      } catch { }
+      } catch {}
 
       isPressedRef.current = true;
       setIsHolding(true);
@@ -253,7 +364,7 @@ export const ElasticButton = React.forwardRef<
         if (e.currentTarget.hasPointerCapture(e.pointerId)) {
           e.currentTarget.releasePointerCapture(e.pointerId);
         }
-      } catch { }
+      } catch {}
 
       const wasHolding = isPressedRef.current;
       isPressedRef.current = false;
@@ -284,7 +395,7 @@ export const ElasticButton = React.forwardRef<
         if (e.currentTarget.hasPointerCapture(e.pointerId)) {
           e.currentTarget.releasePointerCapture(e.pointerId);
         }
-      } catch { }
+      } catch {}
       isPressedRef.current = false;
       setIsHolding(false);
       controls.start({
@@ -298,8 +409,10 @@ export const ElasticButton = React.forwardRef<
       "relative inline-flex items-center justify-center select-none cursor-pointer outline-none transition-colors",
       "disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none",
       hasImages ? "p-0 overflow-visible" : sizeStyles[size],
-      hasImages && variant === "default" ? "bg-transparent border-0 shadow-none" : variantStyles[variant],
-      className
+      hasImages && variant === "default"
+        ? "bg-transparent border-0 shadow-none"
+        : variantStyles[variant],
+      className,
     );
 
     const innerContent = (
@@ -317,7 +430,7 @@ export const ElasticButton = React.forwardRef<
                   key={`${ripple.id}-${index}`}
                   className={cn(
                     "absolute pointer-events-none rounded-[inherit] border z-0",
-                    rippleClassName || defaultRippleStyles[variant]
+                    rippleClassName || defaultRippleStyles[variant],
                   )}
                   initial={{
                     top: rippleInset,
@@ -351,7 +464,7 @@ export const ElasticButton = React.forwardRef<
                   }}
                 />
               );
-            })
+            }),
           )}
 
         {hasImages ? (
@@ -359,17 +472,17 @@ export const ElasticButton = React.forwardRef<
             animate={
               currentImage === 2
                 ? {
-                  rotate: [0, -2.2, 1.8, -0.8, 0.3, 0],
-                  x: [0, -2, 1.6, -0.6, 0.2, 0],
-                  skewX: [0, 1.2, -1, 0.5, -0.2, 0],
-                  scale: [1, 0.985, 1.018, 0.996, 1.002, 1],
-                }
+                    rotate: [0, -2.2, 1.8, -0.8, 0.3, 0],
+                    x: [0, -2, 1.6, -0.6, 0.2, 0],
+                    skewX: [0, 1.2, -1, 0.5, -0.2, 0],
+                    scale: [1, 0.985, 1.018, 0.996, 1.002, 1],
+                  }
                 : {
-                  rotate: 0,
-                  x: 0,
-                  skewX: 0,
-                  scale: 1,
-                }
+                    rotate: 0,
+                    x: 0,
+                    skewX: 0,
+                    scale: 1,
+                  }
             }
             transition={{
               duration: 0.45,
@@ -391,7 +504,7 @@ export const ElasticButton = React.forwardRef<
                   currentImage === 1
                     ? "opacity-100 scale-100 z-10 filter-none"
                     : "opacity-0 scale-95 z-0 filter blur-[2px]",
-                  imageClassName
+                  imageClassName,
                 )}
               />
             )}
@@ -408,7 +521,7 @@ export const ElasticButton = React.forwardRef<
                   currentImage === 2
                     ? "opacity-100 scale-100 z-10 filter-none"
                     : "opacity-0 scale-95 z-0 filter blur-[2px]",
-                  imageClassName
+                  imageClassName,
                 )}
               />
             )}
@@ -440,7 +553,8 @@ export const ElasticButton = React.forwardRef<
             }}
             className={cn(
               "absolute rounded-[inherit] border-solid pointer-events-none z-20",
-              img2BorderClassName || "border-emerald-500 dark:border-emerald-400"
+              img2BorderClassName ||
+                "border-emerald-500 dark:border-emerald-400",
             )}
           />
         )}
@@ -451,45 +565,47 @@ export const ElasticButton = React.forwardRef<
       <div
         className={cn(
           "absolute right-[calc(100%+8px)] top-1/2 -translate-y-1/2 pointer-events-none select-none hidden md:flex items-center gap-1.5 whitespace-nowrap opacity-85 dark:opacity-80 z-30",
-          hintClassName
+          hintClassName,
         )}
       >
-        <AnimatePresence mode="wait" initial={false}>
-          <motion.span
+        <AnimatePresence mode="wait">
+          <motion.div
             key={currentImage}
-            initial={{ opacity: 0, y: 3, scale: 0.94 }}
+            initial={{ opacity: 0, y: 4, scale: 0.94 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -3, scale: 0.94 }}
-            transition={{ duration: 0.18, ease: "easeOut" }}
-            className="font-handwriting text-[18px] sm:text-[20px] font-semibold text-zinc-500 dark:text-zinc-400 -rotate-3 leading-none inline-block"
+            transition={{ duration: 0.22, ease: "easeOut" }}
+            className="flex items-center gap-1.5"
           >
-            {currentImage === 2 ? hintTextImg2 : hintText}
-          </motion.span>
+            <span className="font-handwriting text-[18px] sm:text-[20px] font-semibold text-zinc-500 dark:text-zinc-400 -rotate-3 leading-none inline-block">
+              {currentImage === 2 ? hintTextImg2 : hintText}
+            </span>
+            <svg
+              width="44"
+              height="24"
+              viewBox="0 0 44 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              className="text-zinc-400 dark:text-zinc-500 shrink-0 transform -translate-y-1.5"
+            >
+              <path
+                d="M 2 18 C 12 6, 26 4, 38 6"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                fill="none"
+              />
+              <path
+                d="M 30 1 L 39 6 L 31 11"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                fill="none"
+              />
+            </svg>
+          </motion.div>
         </AnimatePresence>
-        <svg
-          width="44"
-          height="24"
-          viewBox="0 0 44 24"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          className="text-zinc-400 dark:text-zinc-500 shrink-0 transform -translate-y-0.5"
-        >
-          <path
-            d="M 2 18 C 12 6, 26 4, 38 6"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            fill="none"
-          />
-          <path
-            d="M 30 1 L 39 6 L 31 11"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            fill="none"
-          />
-        </svg>
       </div>
     ) : null;
 
@@ -501,12 +617,24 @@ export const ElasticButton = React.forwardRef<
         draggable={false}
         onDragStart={(e) => e.preventDefault()}
         data-holding={isHolding}
-        onClick={handleClick as unknown as React.MouseEventHandler<HTMLDivElement>}
-        onPointerEnter={handlePointerEnter as unknown as React.PointerEventHandler<HTMLDivElement>}
-        onPointerLeave={handlePointerLeave as unknown as React.PointerEventHandler<HTMLDivElement>}
-        onPointerDown={handlePointerDown as unknown as React.PointerEventHandler<HTMLDivElement>}
-        onPointerUp={handlePointerUp as unknown as React.PointerEventHandler<HTMLDivElement>}
-        onPointerCancel={handlePointerCancel as unknown as React.PointerEventHandler<HTMLDivElement>}
+        onClick={
+          handleClick as unknown as React.MouseEventHandler<HTMLDivElement>
+        }
+        onPointerEnter={
+          handlePointerEnter as unknown as React.PointerEventHandler<HTMLDivElement>
+        }
+        onPointerLeave={
+          handlePointerLeave as unknown as React.PointerEventHandler<HTMLDivElement>
+        }
+        onPointerDown={
+          handlePointerDown as unknown as React.PointerEventHandler<HTMLDivElement>
+        }
+        onPointerUp={
+          handlePointerUp as unknown as React.PointerEventHandler<HTMLDivElement>
+        }
+        onPointerCancel={
+          handlePointerCancel as unknown as React.PointerEventHandler<HTMLDivElement>
+        }
         className={baseClass}
         {...(props as HTMLMotionProps<"div">)}
       >
@@ -544,7 +672,7 @@ export const ElasticButton = React.forwardRef<
     }
 
     return buttonElement;
-  }
+  },
 );
 
 ElasticButton.displayName = "ElasticButton";

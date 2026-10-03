@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import {
   AnimatePresence,
@@ -46,14 +46,17 @@ export function TreeQRCard({
   copyText,
   href,
 }: TreeQRCardProps) {
-  const [mounted, setMounted] = useState(false);
+  const mounted = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
+  );
   const [isLoading, setIsLoading] = useState(!!query);
   const [hasError, setHasError] = useState(!query);
   const [prevQuery, setPrevQuery] = useState(query);
 
-  // State đếm số lần click (0 = ban đầu, 1 = lẻ hiển thị xoay, 2 = chẵn ẩn xoay...)
-  const [clickCount, setClickCount] = useState(0);
   const [follower, setFollower] = useState<FollowerState | null>(null);
+  const followerRef = useRef<FollowerState | null>(null);
 
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
@@ -61,10 +64,7 @@ export function TreeQRCard({
   const springY = useSpring(mouseY, { stiffness: 850, damping: 45 });
   const timersRef = useRef<NodeJS.Timeout[]>([]);
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const triggerActionRef = useRef<((clientX: number, clientY: number) => void) | null>(null);
 
   const clearAllTimers = () => {
     timersRef.current.forEach((t) => clearTimeout(t));
@@ -100,58 +100,68 @@ export function TreeQRCard({
 
   // Hàm kích hoạt hiệu ứng khi click
   const triggerAction = (clientX: number, clientY: number) => {
-    setClickCount((prev) => {
-      const nextCount = prev + 1;
+    // Nếu đang trong tiến trình hiển thị (đang xoay hoặc đang hiện check), click tiếp sẽ lập tức hủy & ẩn
+    if (followerRef.current) {
+      clearAllTimers();
+      followerRef.current = null;
+      setFollower(null);
+      return;
+    }
 
-      // Số lẻ (1, 3, 5, ...): hiển thị xoay Aperture -> Check và copy link
-      if (nextCount % 2 !== 0) {
-        const textToCopy = copyText || href || TREE_QR_TARGET_URL;
-        if (typeof navigator !== "undefined" && navigator.clipboard) {
-          navigator.clipboard.writeText(textToCopy).catch(() => {});
-        }
+    // Nếu chưa chạy: Bắt đầu xoay và copy link
+    const textToCopy = copyText || href || TREE_QR_TARGET_URL;
+    if (typeof navigator !== "undefined" && navigator.clipboard) {
+      navigator.clipboard.writeText(textToCopy).catch(() => {});
+    }
 
-        clearAllTimers();
+    clearAllTimers();
 
-        // Định vị trí chuột ngay tức thì tại vị trí click (jump để không bị lướt từ góc)
-        mouseX.set(clientX);
-        mouseY.set(clientY);
-        springX.jump(clientX);
-        springY.jump(clientY);
+    // Định vị trí chuột ngay tức thì tại vị trí click
+    mouseX.set(clientX);
+    mouseY.set(clientY);
+    springX.jump(clientX);
+    springY.jump(clientY);
 
-        const newId = Date.now();
-        setFollower({ id: newId, phase: "spinning" });
+    const newId = Date.now();
+    const newFollower: FollowerState = { id: newId, phase: "spinning" };
+    followerRef.current = newFollower;
+    setFollower(newFollower);
 
-        // 1. Xoay Aperture 1s ("Copying link...")
-        const timerCheck = setTimeout(() => {
-          setFollower((p) =>
-            p?.id === newId ? { ...p, phase: "checked" } : p,
-          );
-        }, 1000);
+    // 1. Xoay Aperture 1s ("Copying link...")
+    const timerCheck = setTimeout(() => {
+      setFollower((p) => {
+        if (p?.id !== newId) return p;
+        const next = { ...p, phase: "checked" as const };
+        followerRef.current = next;
+        return next;
+      });
+    }, 1000);
 
-        // 2. Sang Check 1s ("Link copied!")
-        const timerExit = setTimeout(() => {
-          setFollower((p) =>
-            p?.id === newId ? { ...p, phase: "exiting" } : p,
-          );
-        }, 2000);
+    // 2. Sang Check 1s ("Link copied!")
+    const timerExit = setTimeout(() => {
+      setFollower((p) => {
+        if (p?.id !== newId) return p;
+        const next = { ...p, phase: "exiting" as const };
+        followerRef.current = next;
+        return next;
+      });
+    }, 2000);
 
-        // 3. Biến mất hoàn toàn và gỡ bỏ khỏi DOM
-        const timerFinish = setTimeout(() => {
-          setFollower((p) => (p?.id === newId ? null : p));
-          setClickCount(0); // Reset về 0 để lần click kế tiếp luôn là 1 (số lẻ)
-        }, 2300);
+    // 3. Biến mất hoàn toàn và gỡ bỏ khỏi DOM
+    const timerFinish = setTimeout(() => {
+      setFollower((p) => {
+        if (p?.id !== newId) return p;
+        followerRef.current = null;
+        return null;
+      });
+    }, 2300);
 
-        timersRef.current.push(timerCheck, timerExit, timerFinish);
-      } else {
-        // Số chẵn (2, 4, 6, ...): hủy xoay
-        clearAllTimers();
-        setFollower(null);
-        setClickCount(0);
-      }
-
-      return nextCount;
-    });
+    timersRef.current.push(timerCheck, timerExit, timerFinish);
   };
+
+  useEffect(() => {
+    triggerActionRef.current = triggerAction;
+  });
 
   // Khi iframe tải xong: gắn listener nội bộ để vừa xoay 3D được, vừa bắt được click
   const handleIframeLoad = () => {
@@ -178,7 +188,7 @@ export function TreeQRCard({
             const rect = iframeRef.current?.getBoundingClientRect();
             const cx = rect ? rect.left + e.clientX * 0.7 : e.clientX;
             const cy = rect ? rect.top + e.clientY * 0.7 : e.clientY;
-            triggerAction(cx, cy);
+            triggerActionRef.current?.(cx, cy);
           }
         });
 

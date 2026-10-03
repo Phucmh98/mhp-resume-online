@@ -19,6 +19,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { BLOGS_DATA } from "@/app/utils/data/blogs-data";
 
 export default function ProfileSection() {
   const [githubUser, setGitHubUser] = useState<GitHubUser>();
@@ -36,7 +37,7 @@ export default function ProfileSection() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await fetch("https://api.github.com/users/Phucmh98");
+        const res = await fetch(BLOGS_DATA.url_github);
         const data = await res.json();
         setGitHubUser(data);
       } catch (error) {
@@ -79,9 +80,12 @@ export default function ProfileSection() {
           <TooltipTrigger
             render={
               <SoftPillButton
+                as={Link}
+                href={BLOGS_DATA.url_blog}
+                target="_blank"
+                rel="noopener noreferrer"
                 variant="secondary"
                 className="px-3 py-1.5 text-[12px]! cursor-pointer md:max-lg:p-0! md:max-lg:size-7.5 md:max-lg:flex md:max-lg:items-center md:max-lg:justify-center"
-                onClick={() => setOpenDialog(true)}
               >
                 <div className="flex items-center gap-1.5 md:max-lg:gap-0 md:max-lg:justify-center whitespace-nowrap opacity-80 group-hover:opacity-100 transition-opacity">
                   <Sparkles className="w-3.5 h-3.5 shrink-0" />

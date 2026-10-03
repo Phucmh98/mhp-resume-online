@@ -1,3 +1,5 @@
+import { BLOGS_DATA } from "@/app/utils/data/blogs-data";
+
 export type SendMailParams = {
   name: string;
   email: string;
@@ -6,7 +8,7 @@ export type SendMailParams = {
 
 export const sendMail = async (data: SendMailParams) => {
   try {
-    const res = await fetch("https://api.emailjs.com/api/v1.0/email/send", {
+    const res = await fetch(BLOGS_DATA.url_emailjs, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

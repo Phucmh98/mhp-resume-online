@@ -190,8 +190,21 @@ export const ElasticButton = React.forwardRef<
     const whooshAudioRef = useRef<HTMLAudioElement | null>(null);
     const soundTimerRef = useRef<NodeJS.Timeout | null>(null);
     const lastSoundPlayedRef = useRef(0);
+    const lastClickTimeRef = useRef(0);
     const isFirstMountRef = useRef(true);
     const prevImageRef = useRef<1 | 2>(currentImage);
+
+    // Dừng âm thanh đang phát để tránh bị chồng chéo
+    const stopAllSounds = () => {
+      if (popAudioRef.current) {
+        popAudioRef.current.pause();
+        popAudioRef.current.currentTime = 0;
+      }
+      if (whooshAudioRef.current) {
+        whooshAudioRef.current.pause();
+        whooshAudioRef.current.currentTime = 0;
+      }
+    };
 
     // Khởi tạo audio một lần ở client
     useEffect(() => {
@@ -222,25 +235,17 @@ export const ElasticButton = React.forwardRef<
     }, [enablePopSound, popSoundSrc, enableWhooshSound, whooshSoundSrc]);
 
     const playBubblePop = () => {
-      const now = Date.now();
-      // Chống spam âm thanh: ít nhất 300ms giữa 2 lần phát
-      if (now - lastSoundPlayedRef.current < 300) return;
-      lastSoundPlayedRef.current = now;
-
+      stopAllSounds();
+      lastSoundPlayedRef.current = Date.now();
       if (popAudioRef.current) {
-        popAudioRef.current.currentTime = 0;
         popAudioRef.current.play().catch(() => {});
       }
     };
 
     const playWhoosh = () => {
-      const now = Date.now();
-      // Chống spam âm thanh: ít nhất 300ms giữa 2 lần phát
-      if (now - lastSoundPlayedRef.current < 300) return;
-      lastSoundPlayedRef.current = now;
-
+      stopAllSounds();
+      lastSoundPlayedRef.current = Date.now();
       if (whooshAudioRef.current) {
-        whooshAudioRef.current.currentTime = 0;
         whooshAudioRef.current.play().catch(() => {});
       }
     };
@@ -296,6 +301,15 @@ export const ElasticButton = React.forwardRef<
 
     const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
       if (disabled) return;
+
+      const now = Date.now();
+      // Chặn click spam / nhấp đúp quá nhanh (< 400ms)
+      if (now - lastClickTimeRef.current < 400) {
+        e.preventDefault();
+        return;
+      }
+      lastClickTimeRef.current = now;
+
       if (src1 && src2) {
         setInternalImage((prev) => {
           const next = prev === 1 ? 2 : 1;

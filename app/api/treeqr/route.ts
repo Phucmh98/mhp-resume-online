@@ -1,26 +1,27 @@
+import { BLOGS_DATA } from "@/app/utils/data/blogs-data";
 import { NextResponse } from "next/server";
 
 export async function GET(req: Request) {
   try {
     const url = new URL(req.url);
-    const qParam = url.searchParams.get("q") || "MDNodHRwczovL3d3dy5saW5rZWRpbi5jb20vaW4vbWhwaHVjOTgv";
+    const qParam = url.searchParams.get("q") || BLOGS_DATA.treeqr.param;
 
-    const res = await fetch(
-      `https://tree.icqr.com/s/${qParam}`,
-      {
-        headers: {
-          "User-Agent":
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-        },
-      }
-    );
+    const res = await fetch(BLOGS_DATA.treeqr.url + qParam, {
+      headers: {
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+      },
+    });
 
     let html = await res.text();
 
     // Point assets to our proxy or absolute remote URLs
     html = html.replace(/src="\/assets\//g, 'src="/api/treeqr/assets/');
     html = html.replace(/href="\/assets\//g, 'href="/api/treeqr/assets/');
-    html = html.replace(/href="\/favicon\//g, 'href="https://tree.icqr.com/favicon/');
+    html = html.replace(
+      /href="\/favicon\//g,
+      'href="https://tree.icqr.com/favicon/',
+    );
 
     // Injected CSS and clean-up script
     const injectContent = `

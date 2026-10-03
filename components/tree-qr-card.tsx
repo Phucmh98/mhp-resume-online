@@ -12,6 +12,7 @@ import { MorphIcon } from "morphicons/react";
 import { Aperture, Check } from "lucide";
 import { cn } from "@/lib/utils";
 import Spinner from "@/components/ui/spinner";
+import { BLOGS_DATA } from "@/app/utils/data/blogs-data";
 
 interface TreeQRCardProps {
   className?: string;
@@ -30,9 +31,6 @@ interface TreeQRCardProps {
   href?: string;
 }
 
-// Target URL dự phòng nếu không truyền qua prop
-export const TREE_QR_TARGET_URL = "https://your-link-here.com";
-
 type FollowerPhase = "spinning" | "checked" | "exiting";
 
 interface FollowerState {
@@ -42,7 +40,7 @@ interface FollowerState {
 
 export function TreeQRCard({
   className = "",
-  query = "MDNodHRwczovL3d3dy5saW5rZWRpbi5jb20vaW4vbWhwaHVjOTgv",
+  query = BLOGS_DATA.url_blog,
   copyText,
   href,
 }: TreeQRCardProps) {
@@ -64,7 +62,9 @@ export function TreeQRCard({
   const springY = useSpring(mouseY, { stiffness: 850, damping: 45 });
   const timersRef = useRef<NodeJS.Timeout[]>([]);
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
-  const triggerActionRef = useRef<((clientX: number, clientY: number) => void) | null>(null);
+  const triggerActionRef = useRef<
+    ((clientX: number, clientY: number) => void) | null
+  >(null);
 
   const clearAllTimers = () => {
     timersRef.current.forEach((t) => clearTimeout(t));
@@ -109,7 +109,7 @@ export function TreeQRCard({
     }
 
     // Nếu chưa chạy: Bắt đầu xoay và copy link
-    const textToCopy = copyText || href || TREE_QR_TARGET_URL;
+    const textToCopy = copyText || href || BLOGS_DATA.url_blog;
     if (typeof navigator !== "undefined" && navigator.clipboard) {
       navigator.clipboard.writeText(textToCopy).catch(() => {});
     }
